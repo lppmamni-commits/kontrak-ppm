@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPPM UNIMAR AMNI - Kontrak PPM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://karir.unimar-amni.ac.id/assets/1/images/amni-png.png" type="image/png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .greeting-time {
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        .contract-preview {
+            height: 80vh;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-container {
+            max-width: 400px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div class="login-container bg-white p-8 rounded-lg">
+            <div class="flex justify-center mb-6">
+                <img src="https://karir.unimar-amni.ac.id/assets/1/images/amni-png.png" alt="UNIMAR AMNI Logo" class="h-20">
+            </div>
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login Sistem Kontrak PPM</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">NIDN/Username</label>
+                    <input type="text" id="username" name="username" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Masuk
+                    </button>
+                </div>
+            </form>
+            <p class="mt-4 text-center text-sm text-gray-600">
+                Sistem Kontrak Penelitian dan Pengabdian Masyarakat<br>LPPM UNIMAR AMNI Semarang
+            </p>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    <div id="user-dashboard" class="hidden min-h-screen">
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-900">
+                        <span id="greeting" class="greeting-time"></span>, <span id="user-name" class="text-blue-600"></span>
+                    </h1>
+                    <p class="text-sm text-gray-500">Kontrak PPM Pendanaan Eksternal Diktisaintek TA 2025</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <div id="current-date" class="text-sm font-medium text-gray-700"></div>
+                        <div id="current-time" class="text-sm text-gray-500"></div>
+                    </div>
+                    <button id="logout-user" class="text-sm text-red-600 hover:text-red-800">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Preview Kontrak PPM</h2>
+                        <button id="download-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <i class="fas fa-download mr-2"></i> Download Kontrak
+                        </button>
+                    </div>
+                    
+                    <div class="contract-preview">
+                        <iframe id="contract-iframe" src="" class="w-full h-full" frameborder="0"></iframe>
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-gray-500">
+                        <p>Pastikan untuk memeriksa kembali dokumen kontrak sebelum mendownload. Jika terdapat kesalahan, silakan hubungi admin LPPM.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Informasi Penerima Hibah</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Nama Lengkap</h3>
+                            <p id="user-fullname" class="mt-1 text-sm text-gray-900"></p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">NIDN</h3>
+                            <p id="user-nidn" class="mt-1 text-sm text-gray-900"></p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Jabatan Fungsional</h3>
+                            <p id="user-position" class="mt-1 text-sm text-gray-900"></p>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500">Program Studi</h3>
+                            <p id="user-study-program" class="mt-1 text-sm text-gray-900"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="bg-white border-t border-gray-200 mt-8">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <p class="text-center text-sm text-gray-500">
+                    &copy; 2025 LPPM Universitas Maritim AMNI Semarang. All rights reserved.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden min-h-screen">
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-900">
+                        <span id="admin-greeting" class="greeting-time"></span>, Admin LPPM
+                    </h1>
+                    <p class="text-sm text-gray-500">Kontrak PPM Pendanaan Eksternal Diktisaintek TA 2025</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <div id="admin-current-date" class="text-sm font-medium text-gray-700"></div>
+                        <div id="admin-current-time" class="text-sm text-gray-500"></div>
+                    </div>
+                    <button id="logout-admin" class="text-sm text-red-600 hover:text-red-800">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Manajemen Dokumen Kontrak</h2>
+                    
+                    <div class="mb-4">
+                        <label for="user-select" class="block text-sm font-medium text-gray-700">Pilih Penerima Hibah</label>
+                        <select id="user-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border">
+                            <option value="">-- Pilih Penerima Hibah --</option>
+                            <option value="0701097503">Dr. Muhammad Ikhsan Setiawan, S.T., MM.</option>
+                            <option value="0623087102">Dr. Adenanthera Lesmana Dewa, ST., MM.</option>
+                            <option value="0631078702">Dhanan Abimanto, S.Hum, M.Pd.</option>
+                            <option value="0605037502">Encis Indah Suryaningsih, ST., M.Pd.</option>
+                            <option value="0626088202">Kundori, S.Si.T., MM.</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="contract-url" class="block text-sm font-medium text-gray-700">URL Dokumen Kontrak (Google Docs)</label>
+                        <input type="text" id="contract-url" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button id="save-url" class="admin-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-save mr-2"></i> Simpan URL
+                        </button>
+                        <button id="update-url" class="admin-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                            <i class="fas fa-edit mr-2"></i> Update URL
+                        </button>
+                        <button id="delete-url" class="admin-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            <i class="fas fa-trash mr-2"></i> Hapus URL
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Preview Kontrak</h2>
+                    <div class="contract-preview">
+                        <iframe id="admin-contract-iframe" src="" class="w-full h-full" frameborder="0"></iframe>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="bg-white border-t border-gray-200 mt-8">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <p class="text-center text-sm text-gray-500">
+                    &copy; 2025 LPPM Universitas Maritim AMNI Semarang. All rights reserved.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // User data
+        const users = {
+            "0701097503": {
+                name: "Dr. Muhammad Ikhsan Setiawan",
+                fullname: "Dr. Muhammad Ikhsan Setiawan, S.T., MM.",
+                position: "Lektor Kepala",
+                studyProgram: "S1 Transportasi"
+            },
+            "0623087102": {
+                name: "Dr. Adenanthera Lesmana Dewa",
+                fullname: "Dr. Adenanthera Lesmana Dewa, ST., MM.",
+                position: "Lektor Kepala",
+                studyProgram: "S1 Transportasi"
+            },
+            "0631078702": {
+                name: "Dhanan Abimanto",
+                fullname: "Dhanan Abimanto, S.Hum, M.Pd.",
+                position: "Lektor",
+                studyProgram: "S1 Transportasi"
+            },
+            "0605037502": {
+                name: "Encis Indah Suryaningsih",
+                fullname: "Encis Indah Suryaningsih, ST., M.Pd.",
+                position: "Asisten Ahli",
+                studyProgram: "D3 Nautika"
+            },
+            "0626088202": {
+                name: "Kundori",
+                fullname: "Kundori, S.Si.T., MM.",
+                position: "Lektor",
+                studyProgram: "D3 Teknika"
+            }
+        };
+
+        // Contract URLs (simulated database)
+        let contractUrls = {
+            "0701097503": "https://docs.google.com/document/d/16qnwW2Dym20OzU9IzxZriKWhzXguQQ5I/preview",
+            "0623087102": "https://docs.google.com/document/d/17alWi5j4G2vvnHz1Fdd8KpKTMOKHp7N_/preview",
+            "0631078702": "https://docs.google.com/document/d/1a7Mb_Zku8q9ZLPn1LuLVvapWghF8M20W/preview",
+            "0605037502": "https://docs.google.com/document/d/1V9kI2DEAzWnap2x7ZPzaBkZEjb3pnJnp/preview",
+            "0626088202": "https://docs.google.com/document/d/1oK7dyka1UfSA_4Dnoc1cq8ZFbrHalkG-/preview"
+        };
+
+        // DOM elements
+        const loginPage = document.getElementById('login-page');
+        const userDashboard = document.getElementById('user-dashboard');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const loginForm = document.getElementById('login-form');
+        const greeting = document.getElementById('greeting');
+        const userName = document.getElementById('user-name');
+        const userFullname = document.getElementById('user-fullname');
+        const userNidn = document.getElementById('user-nidn');
+        const userPosition = document.getElementById('user-position');
+        const userStudyProgram = document.getElementById('user-study-program');
+        const currentDate = document.getElementById('current-date');
+        const currentTime = document.getElementById('current-time');
+        const contractIframe = document.getElementById('contract-iframe');
+        const downloadBtn = document.getElementById('download-btn');
+        const logoutAdmin = document.getElementById('logout-admin');
+        const adminGreeting = document.getElementById('admin-greeting');
+        const adminCurrentDate = document.getElementById('admin-current-date');
+        const adminCurrentTime = document.getElementById('admin-current-time');
+        const userSelect = document.getElementById('user-select');
+        const contractUrlInput = document.getElementById('contract-url');
+        const saveUrlBtn = document.getElementById('save-url');
+        const updateUrlBtn = document.getElementById('update-url');
+        const deleteUrlBtn = document.getElementById('delete-url');
+        const adminContractIframe = document.getElementById('admin-contract-iframe');
+
+        // Current user
+        let currentUser = null;
+
+        // Update time and date
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeString = now.toLocaleTimeString('id-ID');
+            const dateString = now.toLocaleDateString('id-ID', options);
+            
+            if (currentDate) currentDate.textContent = dateString;
+            if (currentTime) currentTime.textContent = timeString;
+            if (adminCurrentDate) adminCurrentDate.textContent = dateString;
+            if (adminCurrentTime) adminCurrentTime.textContent = timeString;
+            
+            // Set greeting based on time of day
+            const hours = now.getHours();
+            let greetingText = '';
+            
+            if (hours >= 0 && hours < 11) {
+                greetingText = 'Selamat pagi';
+            } else if (hours >= 11 && hours < 14.5) {
+                greetingText = 'Selamat siang';
+            } else if (hours >= 14.5 && hours < 18) {
+                greetingText = 'Selamat sore';
+            } else {
+                greetingText = 'Selamat malam';
+            }
+            
+            if (greeting) greeting.textContent = greetingText;
+            if (adminGreeting) adminGreeting.textContent = greetingText;
+        }
+
+        // Set greeting immediately
+        updateDateTime();
+        // Update every second
+        setInterval(updateDateTime, 1000);
+
+        // Login form handler
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Check for admin login
+            if (username === 'hibah123' && password === 'hibah123') {
+                loginPage.classList.add('hidden');
+                adminDashboard.classList.remove('hidden');
+                return;
+            }
+            
+            // Check for user login
+            if (users[username] && password === username) {
+                currentUser = username;
+                loginPage.classList.add('hidden');
+                userDashboard.classList.remove('hidden');
+                
+                // Set user info
+                userName.textContent = users[username].name;
+                userFullname.textContent = users[username].fullname;
+                userNidn.textContent = username;
+                userPosition.textContent = users[username].position;
+                userStudyProgram.textContent = users[username].studyProgram;
+                
+                // Load contract
+                if (contractUrls[username]) {
+                    contractIframe.src = contractUrls[username];
+                } else {
+                    contractIframe.src = "about:blank";
+                }
+            } else {
+                alert('NIDN atau password salah. Silakan coba lagi.');
+            }
+        });
+
+        // Download button handler
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                if (currentUser && contractUrls[currentUser]) {
+                    // Replace /preview with /export?format=doc for download
+                    const downloadUrl = contractUrls[currentUser].replace('/preview', '/export?format=doc');
+                    window.open(downloadUrl, '_blank');
+                } else {
+                    alert('Dokumen kontrak tidak tersedia.');
+                }
+            });
+        }
+
+        // Logout handlers
+        if (logoutAdmin) {
+            logoutAdmin.addEventListener('click', function() {
+                adminDashboard.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            });
+        }
+
+        const logoutUser = document.getElementById('logout-user');
+        if (logoutUser) {
+            logoutUser.addEventListener('click', function() {
+                userDashboard.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            });
+        }
+
+        // User select change handler
+        if (userSelect) {
+            userSelect.addEventListener('change', function() {
+                const selectedUser = this.value;
+                if (selectedUser) {
+                    contractUrlInput.value = contractUrls[selectedUser] || '';
+                    adminContractIframe.src = contractUrls[selectedUser] || "about:blank";
+                } else {
+                    contractUrlInput.value = '';
+                    adminContractIframe.src = "about:blank";
+                }
+            });
+        }
+
+        // Save URL button
+        if (saveUrlBtn) {
+            saveUrlBtn.addEventListener('click', function() {
+                const selectedUser = userSelect.value;
+                const url = contractUrlInput.value;
+                
+                if (!selectedUser) {
+                    alert('Pilih penerima hibah terlebih dahulu.');
+                    return;
+                }
+                
+                if (!url) {
+                    alert('Masukkan URL dokumen kontrak.');
+                    return;
+                }
+                
+                // Validate Google Docs URL
+                if (!url.includes('docs.google.com')) {
+                    alert('URL harus berupa Google Docs.');
+                    return;
+                }
+                
+                // Add /preview if not present
+                let finalUrl = url;
+                if (!url.includes('/preview')) {
+                    finalUrl = url.replace('/edit', '/preview');
+                }
+                
+                contractUrls[selectedUser] = finalUrl;
+                adminContractIframe.src = finalUrl;
+                alert('URL dokumen kontrak berhasil disimpan.');
+            });
+        }
+
+        // Update URL button
+        if (updateUrlBtn) {
+            updateUrlBtn.addEventListener('click', function() {
+                const selectedUser = userSelect.value;
+                const url = contractUrlInput.value;
+                
+                if (!selectedUser) {
+                    alert('Pilih penerima hibah terlebih dahulu.');
+                    return;
+                }
+                
+                if (!url) {
+                    alert('Masukkan URL dokumen kontrak yang baru.');
+                    return;
+                }
+                
+                // Validate Google Docs URL
+                if (!url.includes('docs.google.com')) {
+                    alert('URL harus berupa Google Docs.');
+                    return;
+                }
+                
+                // Add /preview if not present
+                let finalUrl = url;
+                if (!url.includes('/preview')) {
+                    finalUrl = url.replace('/edit', '/preview');
+                }
+                
+                contractUrls[selectedUser] = finalUrl;
+                adminContractIframe.src = finalUrl;
+                alert('URL dokumen kontrak berhasil diperbarui.');
+            });
+        }
+
+        // Delete URL button
+        if (deleteUrlBtn) {
+            deleteUrlBtn.addEventListener('click', function() {
+                const selectedUser = userSelect.value;
+                
+                if (!selectedUser) {
+                    alert('Pilih penerima hibah terlebih dahulu.');
+                    return;
+                }
+                
+                if (confirm('Apakah Anda yakin ingin menghapus URL dokumen kontrak ini?')) {
+                    delete contractUrls[selectedUser];
+                    contractUrlInput.value = '';
+                    adminContractIframe.src = "about:blank";
+                    alert('URL dokumen kontrak berhasil dihapus.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
