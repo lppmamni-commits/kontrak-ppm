@@ -1,503 +1,425 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LPPM UNIMAR AMNI - Kontrak PPM</title>
+    <title>Sistem Kontrak PPM - LPPM UNIMAR AMNI</title>
+    <!-- Favicon dan Logo -->
+    <link rel="icon" href="https://sia.unimar-amni.ac.id/lib/img/logo.png" type="image/png">
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="https://karir.unimar-amni.ac.id/assets/1/images/amni-png.png" type="image/png">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
         }
-        
-        .greeting-time {
-            color: #1e40af;
-            font-weight: 600;
+        /* Style untuk scrollbar di iframe agar lebih minimalis */
+        iframe::-webkit-scrollbar {
+            width: 8px;
         }
-        
-        .contract-preview {
-            height: 80vh;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        iframe::-webkit-scrollbar-track {
+            background: #f1f1f1;
         }
-        
-        .login-container {
-            max-width: 400px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        iframe::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
         }
-        
-        .admin-btn {
-            transition: all 0.3s ease;
-        }
-        
-        .admin-btn:hover {
-            transform: translateY(-2px);
+        iframe::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
-<body>
-    <!-- Login Page -->
-    <div id="login-page" class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <div class="login-container bg-white p-8 rounded-lg">
-            <div class="flex justify-center mb-6">
-                <img src="https://karir.unimar-amni.ac.id/assets/1/images/amni-png.png" alt="UNIMAR AMNI Logo" class="h-20">
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- === HALAMAN LOGIN === -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center mb-8">
+                <img src="https://sia.unimar-amni.ac.id/lib/img/logo.png" alt="Logo UNIMAR AMNI" class="w-24 h-24 mx-auto mb-4">
+                <h1 class="text-2xl font-bold text-blue-800">Sistem Kontrak PPM</h1>
+                <p class="text-gray-500">LPPM Universitas Maritim AMNI Semarang</p>
             </div>
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login Sistem Kontrak PPM</h2>
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-700">NIDN/Username</label>
-                    <input type="text" id="username" name="username" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" name="username" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="NIDN atau Username Admin" required>
                 </div>
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="password" name="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Password" required>
                 </div>
-                <div>
-                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Masuk
-                    </button>
-                </div>
+                <button type="submit" class="w-full bg-blue-700 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-800 transition duration-300">Login</button>
+                <p id="login-error" class="text-red-500 text-sm text-center mt-4"></p>
             </form>
-            <p class="mt-4 text-center text-sm text-gray-600">
-                Sistem Kontrak Penelitian dan Pengabdian Masyarakat<br>LPPM UNIMAR AMNI Semarang
-            </p>
         </div>
     </div>
 
-    <!-- User Dashboard -->
-    <div id="user-dashboard" class="hidden min-h-screen">
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <div>
-                    <h1 class="text-xl font-semibold text-gray-900">
-                        <span id="greeting" class="greeting-time"></span>, <span id="user-name" class="text-blue-600"></span>
-                    </h1>
-                    <p class="text-sm text-gray-500">Kontrak PPM Pendanaan Eksternal Diktisaintek TA 2025</p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-right">
-                        <div id="current-date" class="text-sm font-medium text-gray-700"></div>
-                        <div id="current-time" class="text-sm text-gray-500"></div>
-                    </div>
-                    <button id="logout-user" class="text-sm text-red-600 hover:text-red-800">
-                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
-                    </button>
-                </div>
+    <!-- === DASBOR DOSEN === -->
+    <div id="dosen-dashboard" class="hidden">
+        <header class="bg-white shadow-md p-4 flex justify-between items-center">
+            <div>
+                <h1 id="greeting" class="text-2xl font-bold text-blue-800"></h1>
+                <p id="dosen-name" class="text-gray-600"></p>
+            </div>
+            <div class="text-right">
+                <p id="datetime" class="font-semibold text-gray-700"></p>
+                <button id="logout-btn-dosen" class="text-sm text-red-500 hover:underline">Logout</button>
             </div>
         </header>
-        
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div class="px-4 py-6 sm:px-0">
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-semibold text-gray-800">Preview Kontrak PPM</h2>
-                        <button id="download-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <i class="fas fa-download mr-2"></i> Download Kontrak
-                        </button>
-                    </div>
-                    
-                    <div class="contract-preview">
-                        <iframe id="contract-iframe" src="" class="w-full h-full" frameborder="0"></iframe>
-                    </div>
-                    
-                    <div class="mt-4 text-sm text-gray-500">
-                        <p>Pastikan untuk memeriksa kembali dokumen kontrak sebelum mendownload. Jika terdapat kesalahan, silakan hubungi admin LPPM.</p>
+        <main class="p-4 md:p-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <!-- === INFORMASI DOSEN === -->
+                <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Informasi Dosen</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                        <div class="flex justify-between border-b py-1">
+                            <p class="font-medium text-gray-500">Nama Lengkap:</p>
+                            <p id="info-fullname" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex justify-between border-b py-1">
+                            <p class="font-medium text-gray-500">NIDN:</p>
+                            <p id="info-nidn" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex justify-between border-b py-1">
+                            <p class="font-medium text-gray-500">Jabatan Fungsional:</p>
+                            <p id="info-position" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex justify-between border-b py-1">
+                            <p class="font-medium text-gray-500">Program Studi:</p>
+                            <p id="info-studyprogram" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="mt-6 bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Informasi Penerima Hibah</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Nama Lengkap</h3>
-                            <p id="user-fullname" class="mt-1 text-sm text-gray-900"></p>
+
+                <h2 class="text-xl font-bold mb-4">Pratinjau Kontrak PPM Hibah Diktisaintek TA 2025</h2>
+                <div class="border rounded-lg overflow-hidden mb-6">
+                    <iframe id="contract-preview" class="w-full h-[70vh]" src=""></iframe>
+                </div>
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <a id="download-btn" href="#" download="kontrak-ppm.docx" class="text-center bg-green-600 text-white font-bold py-2 px-5 rounded-md hover:bg-green-700 transition duration-300">
+                        Unduh Kontrak (.docx)
+                    </a>
+                    <div class="w-full flex-1">
+                        <label for="file-upload" class="block text-sm font-medium text-gray-700 mb-2">Unggah Kontrak Perbaikan (PDF/DOCX):</label>
+                        <div class="flex gap-2">
+                            <input type="file" id="file-upload" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept=".pdf,.doc,.docx">
+                            <button id="upload-btn" class="bg-blue-700 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-800 transition duration-300">Unggah</button>
                         </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">NIDN</h3>
-                            <p id="user-nidn" class="mt-1 text-sm text-gray-900"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Jabatan Fungsional</h3>
-                            <p id="user-position" class="mt-1 text-sm text-gray-900"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Program Studi</h3>
-                            <p id="user-study-program" class="mt-1 text-sm text-gray-900"></p>
-                        </div>
+                        <p id="upload-status" class="text-sm mt-2"></p>
                     </div>
                 </div>
             </div>
         </main>
-        
-        <footer class="bg-white border-t border-gray-200 mt-8">
-            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                <p class="text-center text-sm text-gray-500">
-                    &copy; 2025 LPPM Universitas Maritim AMNI Semarang. All rights reserved.
-                </p>
-            </div>
-        </footer>
     </div>
 
-    <!-- Admin Dashboard -->
-    <div id="admin-dashboard" class="hidden min-h-screen">
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <div>
-                    <h1 class="text-xl font-semibold text-gray-900">
-                        <span id="admin-greeting" class="greeting-time"></span>, Admin LPPM
-                    </h1>
-                    <p class="text-sm text-gray-500">Kontrak PPM Pendanaan Eksternal Diktisaintek TA 2025</p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-right">
-                        <div id="admin-current-date" class="text-sm font-medium text-gray-700"></div>
-                        <div id="admin-current-time" class="text-sm text-gray-500"></div>
-                    </div>
-                    <button id="logout-admin" class="text-sm text-red-600 hover:text-red-800">
-                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
-                    </button>
-                </div>
+    <!-- === DASBOR ADMIN === -->
+    <div id="admin-dashboard" class="hidden">
+        <header class="bg-white shadow-md p-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-800">Dasbor Admin</h1>
+                <p class="text-gray-600">Monitoring Data Dosen dan Unggahan Kontrak</p>
+            </div>
+            <div class="text-right">
+                <p id="admin-datetime" class="font-semibold text-gray-700"></p>
+                <button id="logout-btn-admin" class="text-sm text-red-500 hover:underline">Logout</button>
             </div>
         </header>
-        
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div class="px-4 py-6 sm:px-0">
-                <div class="bg-white p-6 rounded-lg shadow mb-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Manajemen Dokumen Kontrak</h2>
-                    
-                    <div class="mb-4">
-                        <label for="user-select" class="block text-sm font-medium text-gray-700">Pilih Penerima Hibah</label>
-                        <select id="user-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border">
-                            <option value="">-- Pilih Penerima Hibah --</option>
-                            <option value="0701097503">Dr. Muhammad Ikhsan Setiawan, S.T., MM.</option>
-                            <option value="0623087102">Dr. Adenanthera Lesmana Dewa, ST., MM.</option>
-                            <option value="0631078702">Dhanan Abimanto, S.Hum, M.Pd.</option>
-                            <option value="0605037502">Encis Indah Suryaningsih, ST., M.Pd.</option>
-                            <option value="0626088202">Kundori, S.Si.T., MM.</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="contract-url" class="block text-sm font-medium text-gray-700">URL Dokumen Kontrak (Google Docs)</label>
-                        <input type="text" id="contract-url" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    
-                    <div class="flex space-x-4">
-                        <button id="save-url" class="admin-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <i class="fas fa-save mr-2"></i> Simpan URL
-                        </button>
-                        <button id="update-url" class="admin-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                            <i class="fas fa-edit mr-2"></i> Update URL
-                        </button>
-                        <button id="delete-url" class="admin-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            <i class="fas fa-trash mr-2"></i> Hapus URL
-                        </button>
-                    </div>
+        <main class="p-4 md:p-8">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                 <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Manajemen Data Dosen Penerima Hibah</h2>
+                    <button id="refresh-data-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300">Refresh Data</button>
                 </div>
-                
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Preview Kontrak</h2>
-                    <div class="contract-preview">
-                        <iframe id="admin-contract-iframe" src="" class="w-full h-full" frameborder="0"></iframe>
-                    </div>
+                <p id="admin-info" class="text-sm text-center my-2"></p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left">Nama Dosen</th>
+                                <th class="py-2 px-4 border-b text-left">NIDN</th>
+                                <th class="py-2 px-4 border-b text-left">URL Kontrak</th>
+                                <th class="py-2 px-4 border-b text-left">File Unggahan</th>
+                                <th class="py-2 px-4 border-b text-left">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-lecturer-list">
+                            <!-- Data akan dimuat di sini oleh JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
-        
-        <footer class="bg-white border-t border-gray-200 mt-8">
-            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                <p class="text-center text-sm text-gray-500">
-                    &copy; 2025 LPPM Universitas Maritim AMNI Semarang. All rights reserved.
-                </p>
-            </div>
-        </footer>
     </div>
 
-    <script>
-        // User data
-        const users = {
-            "0701097503": {
-                name: "Dr. Muhammad Ikhsan Setiawan",
-                fullname: "Dr. Muhammad Ikhsan Setiawan, S.T., MM.",
-                position: "Lektor Kepala",
-                studyProgram: "S1 Transportasi"
-            },
-            "0623087102": {
-                name: "Dr. Adenanthera Lesmana Dewa",
-                fullname: "Dr. Adenanthera Lesmana Dewa, ST., MM.",
-                position: "Lektor Kepala",
-                studyProgram: "S1 Transportasi"
-            },
-            "0631078702": {
-                name: "Dhanan Abimanto",
-                fullname: "Dhanan Abimanto, S.Hum, M.Pd.",
-                position: "Lektor",
-                studyProgram: "S1 Transportasi"
-            },
-            "0605037502": {
-                name: "Encis Indah Suryaningsih",
-                fullname: "Encis Indah Suryaningsih, ST., M.Pd.",
-                position: "Asisten Ahli",
-                studyProgram: "D3 Nautika"
-            },
-            "0626088202": {
-                name: "Kundori",
-                fullname: "Kundori, S.Si.T., MM.",
-                position: "Lektor",
-                studyProgram: "D3 Teknika"
-            }
-        };
 
-        // Contract URLs (simulated database)
-        let contractUrls = {
-            "0701097503": "https://docs.google.com/document/d/16qnwW2Dym20OzU9IzxZriKWhzXguQQ5I/preview",
-            "0623087102": "https://docs.google.com/document/d/17alWi5j4G2vvnHz1Fdd8KpKTMOKHp7N_/preview",
-            "0631078702": "https://docs.google.com/document/d/1a7Mb_Zku8q9ZLPn1LuLVvapWghF8M20W/preview",
-            "0605037502": "https://docs.google.com/document/d/1V9kI2DEAzWnap2x7ZPzaBkZEjb3pnJnp/preview",
-            "0626088202": "https://docs.google.com/document/d/1oK7dyka1UfSA_4Dnoc1cq8ZFbrHalkG-/preview"
-        };
+    <script type="module">
+        // =================================================================================
+        // KONFIGURASI SUPABASE
+        // =================================================================================
+        const supabaseUrl = 'https://jusxtsyewrmkavdpwzlf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1c3h0c3lld3Jta2F2ZHB3emxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NjgzOTgsImV4cCI6MjA3MTM0NDM5OH0.gf8gDi8PxrPqNLWEi8J-cd6Qm-tKC5sEZAlUrPDivAk';
+        // =================================================================================
 
-        // DOM elements
+        const { createClient } = supabase; 
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        // --- VARIABEL GLOBAL & DOM ELEMENTS ---
+        let currentUser = null;
         const loginPage = document.getElementById('login-page');
-        const userDashboard = document.getElementById('user-dashboard');
+        const dosenDashboard = document.getElementById('dosen-dashboard');
         const adminDashboard = document.getElementById('admin-dashboard');
         const loginForm = document.getElementById('login-form');
-        const greeting = document.getElementById('greeting');
-        const userName = document.getElementById('user-name');
-        const userFullname = document.getElementById('user-fullname');
-        const userNidn = document.getElementById('user-nidn');
-        const userPosition = document.getElementById('user-position');
-        const userStudyProgram = document.getElementById('user-study-program');
-        const currentDate = document.getElementById('current-date');
-        const currentTime = document.getElementById('current-time');
-        const contractIframe = document.getElementById('contract-iframe');
-        const downloadBtn = document.getElementById('download-btn');
-        const logoutAdmin = document.getElementById('logout-admin');
-        const adminGreeting = document.getElementById('admin-greeting');
-        const adminCurrentDate = document.getElementById('admin-current-date');
-        const adminCurrentTime = document.getElementById('admin-current-time');
-        const userSelect = document.getElementById('user-select');
-        const contractUrlInput = document.getElementById('contract-url');
-        const saveUrlBtn = document.getElementById('save-url');
-        const updateUrlBtn = document.getElementById('update-url');
-        const deleteUrlBtn = document.getElementById('delete-url');
-        const adminContractIframe = document.getElementById('admin-contract-iframe');
+        const loginError = document.getElementById('login-error');
 
-        // Current user
-        let currentUser = null;
+        // --- FUNGSI UTAMA ---
 
-        // Update time and date
+        function showPage(pageId) {
+            [loginPage, dosenDashboard, adminDashboard].forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
         function updateDateTime() {
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const timeString = now.toLocaleTimeString('id-ID');
             const dateString = now.toLocaleDateString('id-ID', options);
+            const timeString = now.toLocaleTimeString('id-ID');
+            const fullDateTime = `${dateString}, ${timeString}`;
             
-            if (currentDate) currentDate.textContent = dateString;
-            if (currentTime) currentTime.textContent = timeString;
-            if (adminCurrentDate) adminCurrentDate.textContent = dateString;
-            if (adminCurrentTime) adminCurrentTime.textContent = timeString;
-            
-            // Set greeting based on time of day
-            const hours = now.getHours();
-            let greetingText = '';
-            
-            if (hours >= 0 && hours < 11) {
-                greetingText = 'Selamat pagi';
-            } else if (hours >= 11 && hours < 14.5) {
-                greetingText = 'Selamat siang';
-            } else if (hours >= 14.5 && hours < 18) {
-                greetingText = 'Selamat sore';
-            } else {
-                greetingText = 'Selamat malam';
-            }
-            
-            if (greeting) greeting.textContent = greetingText;
-            if (adminGreeting) adminGreeting.textContent = greetingText;
+            if (!dosenDashboard.classList.contains('hidden')) document.getElementById('datetime').textContent = fullDateTime;
+            if (!adminDashboard.classList.contains('hidden')) document.getElementById('admin-datetime').textContent = fullDateTime;
         }
 
-        // Set greeting immediately
-        updateDateTime();
-        // Update every second
-        setInterval(updateDateTime, 1000);
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greetingText = "Selamat Datang";
+            if (hour >= 0 && hour < 11) greetingText = "Selamat Pagi";
+            else if (hour >= 11 && hour < 14.5) greetingText = "Selamat Siang";
+            else if (hour >= 14.5 && hour < 18) greetingText = "Selamat Sore";
+            else greetingText = "Selamat Malam";
+            document.getElementById('greeting').textContent = greetingText;
+        }
 
-        // Login form handler
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
-            // Check for admin login
+            loginError.textContent = '';
+
             if (username === 'hibah123' && password === 'hibah123') {
-                loginPage.classList.add('hidden');
-                adminDashboard.classList.remove('hidden');
-                return;
-            }
-            
-            // Check for user login
-            if (users[username] && password === username) {
-                currentUser = username;
-                loginPage.classList.add('hidden');
-                userDashboard.classList.remove('hidden');
-                
-                // Set user info
-                userName.textContent = users[username].name;
-                userFullname.textContent = users[username].fullname;
-                userNidn.textContent = username;
-                userPosition.textContent = users[username].position;
-                userStudyProgram.textContent = users[username].studyProgram;
-                
-                // Load contract
-                if (contractUrls[username]) {
-                    contractIframe.src = contractUrls[username];
-                } else {
-                    contractIframe.src = "about:blank";
-                }
+                currentUser = { type: 'admin', name: 'Admin' };
+                sessionStorage.setItem('user', JSON.stringify(currentUser));
+                loadAdminDashboard();
             } else {
-                alert('NIDN atau password salah. Silakan coba lagi.');
+                const { data, error } = await supabaseClient
+                    .from('lecturers')
+                    .select('*')
+                    .eq('nidn', username)
+                    .single();
+
+                if (data && password === username) {
+                    currentUser = { type: 'dosen', nidn: username, name: data.name };
+                    sessionStorage.setItem('user', JSON.stringify(currentUser));
+                    loadDosenDashboard();
+                } else {
+                    loginError.textContent = 'Username atau Password salah.';
+                }
             }
         });
 
-        // Download button handler
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', function() {
-                if (currentUser && contractUrls[currentUser]) {
-                    // Replace /preview with /export?format=doc for download
-                    const downloadUrl = contractUrls[currentUser].replace('/preview', '/export?format=doc');
-                    window.open(downloadUrl, '_blank');
+        async function loadDosenDashboard() {
+            const { data, error } = await supabaseClient
+                .from('lecturers')
+                .select('*')
+                .eq('nidn', currentUser.nidn)
+                .single();
+            
+            if (error || !data) {
+                alert('Gagal memuat data dosen.');
+                return;
+            }
+
+            document.getElementById('dosen-name').textContent = `Selamat datang, ${data.name}`;
+            document.getElementById('info-fullname').textContent = data.fullname;
+            document.getElementById('info-nidn').textContent = data.nidn;
+            document.getElementById('info-position').textContent = data.position;
+            document.getElementById('info-studyprogram').textContent = data.study_program;
+            document.getElementById('contract-preview').src = data.contract_url || '';
+            
+            // Mengubah URL untuk download langsung format .docx
+            const downloadUrl = (data.contract_url || '').replace('/preview', '/export?format=docx');
+            document.getElementById('download-btn').href = downloadUrl;
+            
+            updateGreeting();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            showPage('dosen-dashboard');
+        }
+
+        function loadAdminDashboard() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            fetchAndDisplayAdminData();
+            showPage('admin-dashboard');
+        }
+
+        document.getElementById('upload-btn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('file-upload');
+            const file = fileInput.files[0];
+            const uploadStatus = document.getElementById('upload-status');
+
+            if (!file) {
+                uploadStatus.textContent = 'Silakan pilih file terlebih dahulu.';
+                uploadStatus.className = 'text-sm mt-2 text-red-500';
+                return;
+            }
+
+            uploadStatus.textContent = 'Mengunggah file...';
+            uploadStatus.className = 'text-sm mt-2 text-blue-500';
+
+            const fileName = `${currentUser.nidn}_${Date.now()}_${file.name}`;
+            
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                .from('contracts')
+                .upload(`public/${fileName}`, file);
+
+            if (uploadError) {
+                console.error('Error uploading file:', uploadError);
+                uploadStatus.textContent = `Gagal mengunggah: ${uploadError.message}`;
+                return;
+            }
+            
+            const { data: userDetails } = await supabaseClient.from('lecturers').select('fullname').eq('nidn', currentUser.nidn).single();
+            const { error: dbError } = await supabaseClient
+                .from('uploaded_files')
+                .insert([{ 
+                    nidn: currentUser.nidn, 
+                    nama_dosen: userDetails.fullname,
+                    nama_file: file.name,
+                    path_file: uploadData.path,
+                    url_file: `${supabaseUrl}/storage/v1/object/public/contracts/${uploadData.path}`
+                }]);
+            
+            if (dbError) {
+                uploadStatus.textContent = `Gagal menyimpan data: ${dbError.message}`;
+            } else {
+                uploadStatus.textContent = 'File berhasil diunggah!';
+                fileInput.value = '';
+            }
+        });
+
+        async function fetchAndDisplayAdminData() {
+            const listBody = document.getElementById('admin-lecturer-list');
+            listBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Memuat data...</td></tr>';
+
+            const { data: lecturers, error: lecturersError } = await supabaseClient.from('lecturers').select('*');
+            const { data: files, error: filesError } = await supabaseClient.from('uploaded_files').select('*');
+
+            if (lecturersError || filesError) {
+                listBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Gagal memuat data.</td></tr>`;
+                return;
+            }
+
+            listBody.innerHTML = '';
+            lecturers.forEach(lecturer => {
+                const uploadedFile = files.find(f => f.nidn === lecturer.nidn);
+                const row = document.createElement('tr');
+                row.setAttribute('data-nidn', lecturer.nidn);
+                
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b align-top">${lecturer.fullname}</td>
+                    <td class="py-2 px-4 border-b align-top">${lecturer.nidn}</td>
+                    <td class="py-2 px-4 border-b align-top">
+                        <input type="text" class="url-input w-full border rounded px-2 py-1 text-sm" value="${lecturer.contract_url || ''}">
+                    </td>
+                    <td class="py-2 px-4 border-b align-top text-sm">
+                        ${uploadedFile ? `<a href="${uploadedFile.url_file}" target="_blank" class="text-blue-600 hover:underline">${uploadedFile.nama_file}</a><br><span class="text-xs text-gray-500">(${new Date(uploadedFile.created_at).toLocaleString('id-ID')})</span>` : 'Belum ada'}
+                    </td>
+                    <td class="py-2 px-4 border-b align-top">
+                        <button class="save-url-btn bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600 mb-1 w-full">Simpan URL</button>
+                        ${uploadedFile ? `<button data-file-id="${uploadedFile.id}" data-file-path="${uploadedFile.path_file}" class="delete-file-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 w-full">Hapus File</button>` : ''}
+                    </td>
+                `;
+                listBody.appendChild(row);
+            });
+        }
+        
+        document.getElementById('admin-lecturer-list').addEventListener('click', async (e) => {
+            const adminInfo = document.getElementById('admin-info');
+            adminInfo.textContent = '';
+
+            // --- Simpan URL Kontrak ---
+            if (e.target.classList.contains('save-url-btn')) {
+                const row = e.target.closest('tr');
+                const nidn = row.dataset.nidn;
+                const newUrl = row.querySelector('.url-input').value;
+
+                const { error } = await supabaseClient
+                    .from('lecturers')
+                    .update({ contract_url: newUrl })
+                    .eq('nidn', nidn);
+                
+                if (error) {
+                    adminInfo.textContent = `Gagal menyimpan URL untuk NIDN ${nidn}.`;
+                    adminInfo.className = 'text-sm text-center my-2 text-red-500';
                 } else {
-                    alert('Dokumen kontrak tidak tersedia.');
+                    adminInfo.textContent = `URL untuk NIDN ${nidn} berhasil disimpan.`;
+                    adminInfo.className = 'text-sm text-center my-2 text-green-500';
                 }
-            });
+            }
+
+            // --- Hapus File Unggahan ---
+            if (e.target.classList.contains('delete-file-btn')) {
+                const fileId = e.target.dataset.fileId;
+                const filePath = e.target.dataset.filePath;
+
+                if (confirm('Apakah Anda yakin ingin menghapus file ini? Aksi ini tidak dapat dibatalkan.')) {
+                    // Hapus dari Storage
+                    const { error: storageError } = await supabaseClient.storage.from('contracts').remove([filePath]);
+                    if (storageError) {
+                         adminInfo.textContent = `Gagal menghapus file dari storage: ${storageError.message}`;
+                         return;
+                    }
+                    // Hapus dari Database
+                    const { error: dbError } = await supabaseClient.from('uploaded_files').delete().eq('id', fileId);
+                    if (dbError) {
+                        adminInfo.textContent = `Gagal menghapus data file: ${dbError.message}`;
+                    } else {
+                        adminInfo.textContent = 'File berhasil dihapus.';
+                        fetchAndDisplayAdminData(); // Refresh tabel
+                    }
+                }
+            }
+        });
+
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem('user');
+            const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
+            for (let i = 1; i < interval_id; i++) window.clearInterval(i);
+            showPage('login-page');
+            loginForm.reset();
+        }
+        
+        document.getElementById('logout-btn-dosen').addEventListener('click', logout);
+        document.getElementById('logout-btn-admin').addEventListener('click', logout);
+        document.getElementById('refresh-data-btn').addEventListener('click', fetchAndDisplayAdminData);
+
+        // --- INISIALISASI APLIKASI ---
+        const savedUser = sessionStorage.getItem('user');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            if (currentUser.type === 'admin') loadAdminDashboard();
+            else if (currentUser.type === 'dosen') loadDosenDashboard();
+        } else {
+            showPage('login-page');
         }
 
-        // Logout handlers
-        if (logoutAdmin) {
-            logoutAdmin.addEventListener('click', function() {
-                adminDashboard.classList.add('hidden');
-                loginPage.classList.remove('hidden');
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-            });
-        }
-
-        const logoutUser = document.getElementById('logout-user');
-        if (logoutUser) {
-            logoutUser.addEventListener('click', function() {
-                userDashboard.classList.add('hidden');
-                loginPage.classList.remove('hidden');
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-            });
-        }
-
-        // User select change handler
-        if (userSelect) {
-            userSelect.addEventListener('change', function() {
-                const selectedUser = this.value;
-                if (selectedUser) {
-                    contractUrlInput.value = contractUrls[selectedUser] || '';
-                    adminContractIframe.src = contractUrls[selectedUser] || "about:blank";
-                } else {
-                    contractUrlInput.value = '';
-                    adminContractIframe.src = "about:blank";
-                }
-            });
-        }
-
-        // Save URL button
-        if (saveUrlBtn) {
-            saveUrlBtn.addEventListener('click', function() {
-                const selectedUser = userSelect.value;
-                const url = contractUrlInput.value;
-                
-                if (!selectedUser) {
-                    alert('Pilih penerima hibah terlebih dahulu.');
-                    return;
-                }
-                
-                if (!url) {
-                    alert('Masukkan URL dokumen kontrak.');
-                    return;
-                }
-                
-                // Validate Google Docs URL
-                if (!url.includes('docs.google.com')) {
-                    alert('URL harus berupa Google Docs.');
-                    return;
-                }
-                
-                // Add /preview if not present
-                let finalUrl = url;
-                if (!url.includes('/preview')) {
-                    finalUrl = url.replace('/edit', '/preview');
-                }
-                
-                contractUrls[selectedUser] = finalUrl;
-                adminContractIframe.src = finalUrl;
-                alert('URL dokumen kontrak berhasil disimpan.');
-            });
-        }
-
-        // Update URL button
-        if (updateUrlBtn) {
-            updateUrlBtn.addEventListener('click', function() {
-                const selectedUser = userSelect.value;
-                const url = contractUrlInput.value;
-                
-                if (!selectedUser) {
-                    alert('Pilih penerima hibah terlebih dahulu.');
-                    return;
-                }
-                
-                if (!url) {
-                    alert('Masukkan URL dokumen kontrak yang baru.');
-                    return;
-                }
-                
-                // Validate Google Docs URL
-                if (!url.includes('docs.google.com')) {
-                    alert('URL harus berupa Google Docs.');
-                    return;
-                }
-                
-                // Add /preview if not present
-                let finalUrl = url;
-                if (!url.includes('/preview')) {
-                    finalUrl = url.replace('/edit', '/preview');
-                }
-                
-                contractUrls[selectedUser] = finalUrl;
-                adminContractIframe.src = finalUrl;
-                alert('URL dokumen kontrak berhasil diperbarui.');
-            });
-        }
-
-        // Delete URL button
-        if (deleteUrlBtn) {
-            deleteUrlBtn.addEventListener('click', function() {
-                const selectedUser = userSelect.value;
-                
-                if (!selectedUser) {
-                    alert('Pilih penerima hibah terlebih dahulu.');
-                    return;
-                }
-                
-                if (confirm('Apakah Anda yakin ingin menghapus URL dokumen kontrak ini?')) {
-                    delete contractUrls[selectedUser];
-                    contractUrlInput.value = '';
-                    adminContractIframe.src = "about:blank";
-                    alert('URL dokumen kontrak berhasil dihapus.');
-                }
-            });
-        }
     </script>
 </body>
 </html>
