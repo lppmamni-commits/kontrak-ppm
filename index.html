@@ -74,9 +74,9 @@
         </header>
         <main class="p-4 md:p-8">
             <div class="bg-white p-6 rounded-xl shadow-lg">
-                <!-- === INFORMASI DOSEN === -->
+                <!-- === INFORMASI DOSEN & HIBAH === -->
                 <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Informasi Dosen</h3>
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Informasi Dosen & Hibah</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                         <div class="flex justify-between border-b py-1">
                             <p class="font-medium text-gray-500">Nama Lengkap:</p>
@@ -93,6 +93,18 @@
                         <div class="flex justify-between border-b py-1">
                             <p class="font-medium text-gray-500">Program Studi:</p>
                             <p id="info-studyprogram" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex justify-between border-b py-1 md:col-span-2">
+                            <p class="font-medium text-gray-500">No. Kontrak:</p>
+                            <p id="info-contract-number" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex justify-between border-b py-1 md:col-span-2">
+                            <p class="font-medium text-gray-500">Jumlah Pendanaan (100%):</p>
+                            <p id="info-funding" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex flex-col pt-2 md:col-span-2">
+                            <p class="font-medium text-gray-500 mb-1">Judul Penelitian/Pengabdian:</p>
+                            <p id="info-project-title" class="text-gray-800 font-medium text-left text-base"></p>
                         </div>
                     </div>
                 </div>
@@ -142,7 +154,7 @@
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="py-2 px-4 border-b text-left">Nama Dosen</th>
-                                <th class="py-2 px-4 border-b text-left">NIDN</th>
+                                <th class="py-2 px-4 border-b text-left">Judul Proyek</th>
                                 <th class="py-2 px-4 border-b text-left">URL Kontrak</th>
                                 <th class="py-2 px-4 border-b text-left">File Unggahan</th>
                                 <th class="py-2 px-4 border-b text-left">Aksi</th>
@@ -249,9 +261,15 @@
             document.getElementById('info-nidn').textContent = data.nidn;
             document.getElementById('info-position').textContent = data.position;
             document.getElementById('info-studyprogram').textContent = data.study_program;
+            document.getElementById('info-contract-number').textContent = data.contract_number || '-';
+            document.getElementById('info-project-title').textContent = data.project_title || '-';
+            
+            // Format funding amount
+            const funding = data.funding_amount ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(data.funding_amount) : '-';
+            document.getElementById('info-funding').textContent = funding;
+
             document.getElementById('contract-preview').src = data.contract_url || '';
             
-            // Mengubah URL untuk download langsung format .docx
             const downloadUrl = (data.contract_url || '').replace('/preview', '/export?format=docx');
             document.getElementById('download-btn').href = downloadUrl;
             
@@ -332,8 +350,11 @@
                 row.setAttribute('data-nidn', lecturer.nidn);
                 
                 row.innerHTML = `
-                    <td class="py-2 px-4 border-b align-top">${lecturer.fullname}</td>
-                    <td class="py-2 px-4 border-b align-top">${lecturer.nidn}</td>
+                    <td class="py-2 px-4 border-b align-top">
+                        <p class="font-semibold">${lecturer.fullname}</p>
+                        <p class="text-xs text-gray-600">${lecturer.nidn}</p>
+                    </td>
+                    <td class="py-2 px-4 border-b align-top text-xs">${lecturer.project_title || '-'}</td>
                     <td class="py-2 px-4 border-b align-top">
                         <input type="text" class="url-input w-full border rounded px-2 py-1 text-sm" value="${lecturer.contract_url || ''}">
                     </td>
