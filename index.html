@@ -109,6 +109,14 @@
                     </div>
                 </div>
 
+                <!-- === HISTORI UNGGAHAN === -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Histori Unggahan Kontrak Perbaikan</h3>
+                    <div id="upload-history-list" class="border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm">
+                        <!-- Konten histori akan dimuat oleh JavaScript -->
+                    </div>
+                </div>
+
                 <h2 class="text-xl font-bold mb-4">Pratinjau Kontrak PPM Hibah Diktisaintek TA 2025</h2>
                 <div class="border rounded-lg overflow-hidden mb-6">
                     <iframe id="contract-preview" class="w-full h-[70vh]" src=""></iframe>
@@ -244,6 +252,34 @@
             }
         });
 
+        async function loadUploadHistory(nidn) {
+            const historyListDiv = document.getElementById('upload-history-list');
+            historyListDiv.innerHTML = '<p class="text-gray-500">Memuat histori...</p>';
+
+            const { data: files, error: filesError } = await supabaseClient
+                .from('uploaded_files')
+                .select('*')
+                .eq('nidn', nidn);
+
+            if (filesError) {
+                historyListDiv.innerHTML = '<p class="text-red-500">Gagal memuat histori unggahan.</p>';
+            } else if (files.length === 0) {
+                historyListDiv.innerHTML = '<p class="text-gray-500">Belum ada file perbaikan yang diunggah.</p>';
+            } else {
+                let historyHtml = '<ul class="space-y-2">';
+                files.forEach(file => {
+                    historyHtml += `
+                        <li class="flex justify-between items-center p-2 rounded-md bg-white">
+                            <a href="${file.url_file}" target="_blank" class="text-blue-600 hover:underline">${file.nama_file}</a>
+                            <span class="text-gray-500 text-xs">${new Date(file.created_at).toLocaleString('id-ID')}</span>
+                        </li>
+                    `;
+                });
+                historyHtml += '</ul>';
+                historyListDiv.innerHTML = historyHtml;
+            }
+        }
+
         async function loadDosenDashboard() {
             const { data, error } = await supabaseClient
                 .from('lecturers')
@@ -264,7 +300,6 @@
             document.getElementById('info-contract-number').textContent = data.contract_number || '-';
             document.getElementById('info-project-title').textContent = data.project_title || '-';
             
-            // Format funding amount
             const funding = data.funding_amount ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(data.funding_amount) : '-';
             document.getElementById('info-funding').textContent = funding;
 
@@ -273,6 +308,7 @@
             const downloadUrl = (data.contract_url || '').replace('/preview', '/export?format=docx');
             document.getElementById('download-btn').href = downloadUrl;
             
+            loadUploadHistory(currentUser.nidn);
             updateGreeting();
             updateDateTime();
             setInterval(updateDateTime, 1000);
@@ -328,6 +364,7 @@
             } else {
                 uploadStatus.textContent = 'File berhasil diunggah!';
                 fileInput.value = '';
+                loadUploadHistory(currentUser.nidn); // Refresh histori setelah unggah
             }
         });
 
