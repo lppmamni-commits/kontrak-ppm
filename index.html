@@ -121,10 +121,15 @@
                 <div class="border rounded-lg overflow-hidden mb-6">
                     <iframe id="contract-preview" class="w-full h-[70vh]" src=""></iframe>
                 </div>
-                <div class="flex flex-col md:flex-row gap-4 items-center">
-                    <a id="download-btn" href="#" download="kontrak-ppm.docx" class="text-center bg-green-600 text-white font-bold py-2 px-5 rounded-md hover:bg-green-700 transition duration-300">
-                        Unduh Kontrak (.docx)
-                    </a>
+                <div class="flex flex-col md:flex-row gap-4 items-start">
+                    <div class="flex gap-2">
+                        <a id="download-contract-btn" href="#" download="kontrak-ppm.pdf" class="text-center bg-green-600 text-white font-bold py-2 px-5 rounded-md hover:bg-green-700 transition duration-300">
+                            Unduh Kontrak (.pdf)
+                        </a>
+                        <a id="download-assignment-btn" href="#" download="surat-tugas.pdf" class="text-center bg-blue-600 text-white font-bold py-2 px-5 rounded-md hover:bg-blue-700 transition duration-300">
+                            Unduh Surat Tugas
+                        </a>
+                    </div>
                     <div class="w-full flex-1">
                         <label for="file-upload" class="block text-sm font-medium text-gray-700 mb-2">Unggah Kontrak Perbaikan (PDF/DOCX):</label>
                         <div class="flex gap-2">
@@ -305,8 +310,12 @@
 
             document.getElementById('contract-preview').src = data.contract_url || '';
             
-            const downloadUrl = (data.contract_url || '').replace('/preview', '/export?format=docx');
-            document.getElementById('download-btn').href = downloadUrl;
+            // Mengubah URL untuk download langsung
+            const contractDownloadUrl = (data.contract_url || '').replace(/(\/view|\/preview).*$/, '/export?format=pdf');
+            document.getElementById('download-contract-btn').href = contractDownloadUrl;
+
+            const assignmentDownloadUrl = (data.assignment_letter_url || '').replace(/(\/view|\/preview).*$/, '/export?format=pdf');
+            document.getElementById('download-assignment-btn').href = assignmentDownloadUrl;
             
             loadUploadHistory(currentUser.nidn);
             updateGreeting();
