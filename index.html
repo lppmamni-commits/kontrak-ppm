@@ -230,6 +230,29 @@
             document.getElementById('greeting').textContent = greetingText;
         }
 
+        // Fungsi untuk membuat link download langsung dari Google Drive
+        function getGoogleDriveDownloadUrl(url) {
+            if (!url) return '#';
+            let fileId = null;
+            const patterns = [
+                /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/,
+                /docs\.google\.com\/(?:document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)/
+            ];
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) {
+                    fileId = match[1];
+                    break;
+                }
+            }
+            if (fileId) {
+                return `https://drive.google.com/uc?export=download&id=${fileId}`;
+            }
+            // Fallback jika format URL tidak dikenali
+            return url;
+        }
+
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
@@ -310,12 +333,9 @@
 
             document.getElementById('contract-preview').src = data.contract_url || '';
             
-            // Mengubah URL untuk download langsung
-            const contractDownloadUrl = (data.contract_url || '').replace(/(\/view|\/preview).*$/, '/export?format=pdf');
-            document.getElementById('download-contract-btn').href = contractDownloadUrl;
-
-            const assignmentDownloadUrl = (data.assignment_letter_url || '').replace(/(\/view|\/preview).*$/, '/export?format=pdf');
-            document.getElementById('download-assignment-btn').href = assignmentDownloadUrl;
+            // Menggunakan fungsi baru untuk membuat link download langsung
+            document.getElementById('download-contract-btn').href = getGoogleDriveDownloadUrl(data.contract_url);
+            document.getElementById('download-assignment-btn').href = getGoogleDriveDownloadUrl(data.assignment_letter_url);
             
             loadUploadHistory(currentUser.nidn);
             updateGreeting();
