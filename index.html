@@ -94,8 +94,16 @@
                             <p class="font-medium text-gray-500">Program Studi:</p>
                             <p id="info-studyprogram" class="text-gray-900 font-semibold text-right"></p>
                         </div>
-                        <div class="flex justify-between border-b py-1 md:col-span-2">
-                            <p class="font-medium text-gray-500">No. Kontrak:</p>
+                        <div class="flex justify-between items-center border-b py-1 md:col-span-2">
+                            <p class="font-medium text-gray-500">No. Kontrak Induk (Diktisaintek dengan LLDIKTI VI):</p>
+                            <p id="info-main-contract" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex justify-between items-center border-b py-1 md:col-span-2">
+                            <p class="font-medium text-gray-500">No. Kontrak Turunan (LLDIKTI VI dengan LPPM):</p>
+                            <p id="info-derivative-contract" class="text-gray-900 font-semibold text-right"></p>
+                        </div>
+                        <div class="flex justify-between items-center border-b py-1 md:col-span-2">
+                            <p class="font-medium text-gray-500">No. Kontrak (LPPM dengan Dosen):</p>
                             <p id="info-contract-number" class="text-gray-900 font-semibold text-right"></p>
                         </div>
                         <div class="flex justify-between border-b py-1 md:col-span-2">
@@ -122,7 +130,7 @@
                     <iframe id="contract-preview" class="w-full h-[70vh]" src=""></iframe>
                 </div>
                 <div class="flex flex-col md:flex-row gap-4 items-start">
-                    <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2">
                         <a id="download-contract-btn" href="#" download="kontrak-ppm.pdf" class="text-center bg-green-600 text-white font-bold py-2 px-5 rounded-md hover:bg-green-700 transition duration-300">
                             Unduh Kontrak (.pdf)
                         </a>
@@ -182,7 +190,6 @@
         </main>
     </div>
 
-
     <script type="module">
         // =================================================================================
         // KONFIGURASI SUPABASE
@@ -196,6 +203,7 @@
 
         // --- VARIABEL GLOBAL & DOM ELEMENTS ---
         let currentUser = null;
+        let currentLecturerData = null;
         const loginPage = document.getElementById('login-page');
         const dosenDashboard = document.getElementById('dosen-dashboard');
         const adminDashboard = document.getElementById('admin-dashboard');
@@ -230,7 +238,6 @@
             document.getElementById('greeting').textContent = greetingText;
         }
 
-        // Fungsi untuk membuat link download langsung dari Google Drive
         function getGoogleDriveDownloadUrl(url) {
             if (!url) return '#';
             let fileId = null;
@@ -248,7 +255,6 @@
             if (fileId) {
                 return `https://drive.google.com/uc?export=download&id=${fileId}`;
             }
-            // Fallback jika format URL tidak dikenali
             return url;
         }
 
@@ -297,9 +303,12 @@
                 let historyHtml = '<ul class="space-y-2">';
                 files.forEach(file => {
                     historyHtml += `
-                        <li class="flex justify-between items-center p-2 rounded-md bg-white">
-                            <a href="${file.url_file}" target="_blank" class="text-blue-600 hover:underline">${file.nama_file}</a>
-                            <span class="text-gray-500 text-xs">${new Date(file.created_at).toLocaleString('id-ID')}</span>
+                        <li class="flex justify-between items-center p-2 rounded-md bg-white hover:bg-gray-50">
+                            <div class="flex-grow">
+                                <a href="${file.url_file}" target="_blank" class="text-blue-600 hover:underline">${file.nama_file}</a>
+                                <p class="text-gray-500 text-xs">${new Date(file.created_at).toLocaleString('id-ID')}</p>
+                            </div>
+                            <button data-file-id="${file.id}" data-file-path="${file.path_file}" class="delete-history-btn text-red-500 hover:text-red-700 text-xs font-semibold ml-4 px-2 py-1 rounded-md hover:bg-red-100">HAPUS</button>
                         </li>
                     `;
                 });
@@ -319,21 +328,26 @@
                 alert('Gagal memuat data dosen.');
                 return;
             }
+            
+            currentLecturerData = data;
 
             document.getElementById('dosen-name').textContent = `Selamat datang, ${data.name}`;
             document.getElementById('info-fullname').textContent = data.fullname;
             document.getElementById('info-nidn').textContent = data.nidn;
             document.getElementById('info-position').textContent = data.position;
             document.getElementById('info-studyprogram').textContent = data.study_program;
-            document.getElementById('info-contract-number').textContent = data.contract_number || '-';
             document.getElementById('info-project-title').textContent = data.project_title || '-';
+
+            // Mengisi nomor kontrak dan tanggal dari satu field
+            document.getElementById('info-main-contract').textContent = data.main_contract_number || '-';
+            document.getElementById('info-derivative-contract').textContent = data.derivative_contract_number || '-';
+            document.getElementById('info-contract-number').textContent = data.contract_number || '-';
             
             const funding = data.funding_amount ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(data.funding_amount) : '-';
             document.getElementById('info-funding').textContent = funding;
 
             document.getElementById('contract-preview').src = data.contract_url || '';
             
-            // Menggunakan fungsi baru untuk membuat link download langsung
             document.getElementById('download-contract-btn').href = getGoogleDriveDownloadUrl(data.contract_url);
             document.getElementById('download-assignment-btn').href = getGoogleDriveDownloadUrl(data.assignment_letter_url);
             
@@ -393,7 +407,7 @@
             } else {
                 uploadStatus.textContent = 'File berhasil diunggah!';
                 fileInput.value = '';
-                loadUploadHistory(currentUser.nidn); // Refresh histori setelah unggah
+                loadUploadHistory(currentUser.nidn);
             }
         });
 
@@ -440,7 +454,6 @@
             const adminInfo = document.getElementById('admin-info');
             adminInfo.textContent = '';
 
-            // --- Simpan URL Kontrak ---
             if (e.target.classList.contains('save-url-btn')) {
                 const row = e.target.closest('tr');
                 const nidn = row.dataset.nidn;
@@ -453,32 +466,61 @@
                 
                 if (error) {
                     adminInfo.textContent = `Gagal menyimpan URL untuk NIDN ${nidn}.`;
-                    adminInfo.className = 'text-sm text-center my-2 text-red-500';
                 } else {
                     adminInfo.textContent = `URL untuk NIDN ${nidn} berhasil disimpan.`;
-                    adminInfo.className = 'text-sm text-center my-2 text-green-500';
                 }
             }
 
-            // --- Hapus File Unggahan ---
             if (e.target.classList.contains('delete-file-btn')) {
                 const fileId = e.target.dataset.fileId;
                 const filePath = e.target.dataset.filePath;
 
-                if (confirm('Apakah Anda yakin ingin menghapus file ini? Aksi ini tidak dapat dibatalkan.')) {
-                    // Hapus dari Storage
+                if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
                     const { error: storageError } = await supabaseClient.storage.from('contracts').remove([filePath]);
                     if (storageError) {
                          adminInfo.textContent = `Gagal menghapus file dari storage: ${storageError.message}`;
                          return;
                     }
-                    // Hapus dari Database
                     const { error: dbError } = await supabaseClient.from('uploaded_files').delete().eq('id', fileId);
                     if (dbError) {
                         adminInfo.textContent = `Gagal menghapus data file: ${dbError.message}`;
                     } else {
                         adminInfo.textContent = 'File berhasil dihapus.';
-                        fetchAndDisplayAdminData(); // Refresh tabel
+                        fetchAndDisplayAdminData();
+                    }
+                }
+            }
+        });
+        
+        // Event listener untuk hapus file di histori dosen
+        document.getElementById('upload-history-list').addEventListener('click', async (e) => {
+            if (e.target.classList.contains('delete-history-btn')) {
+                const fileId = e.target.dataset.fileId;
+                const filePath = e.target.dataset.filePath;
+                const uploadStatus = document.getElementById('upload-status');
+                uploadStatus.textContent = '';
+
+                if (confirm('Apakah Anda yakin ingin menghapus file unggahan ini?')) {
+                    uploadStatus.textContent = 'Menghapus file...';
+                    uploadStatus.className = 'text-sm mt-2 text-blue-500';
+                    
+                    // Hapus dari Storage
+                    const { error: storageError } = await supabaseClient.storage.from('contracts').remove([filePath]);
+                    if (storageError) {
+                        uploadStatus.textContent = `Gagal menghapus file: ${storageError.message}`;
+                        uploadStatus.className = 'text-sm mt-2 text-red-500';
+                        return;
+                    }
+
+                    // Hapus dari Database
+                    const { error: dbError } = await supabaseClient.from('uploaded_files').delete().eq('id', fileId);
+                    if (dbError) {
+                        uploadStatus.textContent = `Gagal menghapus data file: ${dbError.message}`;
+                        uploadStatus.className = 'text-sm mt-2 text-red-500';
+                    } else {
+                        uploadStatus.textContent = 'File berhasil dihapus.';
+                        uploadStatus.className = 'text-sm mt-2 text-green-500';
+                        loadUploadHistory(currentUser.nidn); // Refresh histori
                     }
                 }
             }
@@ -486,6 +528,7 @@
 
         function logout() {
             currentUser = null;
+            currentLecturerData = null;
             sessionStorage.removeItem('user');
             const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
             for (let i = 1; i < interval_id; i++) window.clearInterval(i);
@@ -510,3 +553,4 @@
     </script>
 </body>
 </html>
+
