@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -32,6 +32,21 @@
         }
         iframe::-webkit-scrollbar-thumb:hover {
             background: #555;
+        }
+        .modal-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-scrollbar::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        .modal-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 3px;
+        }
+        .grant-tab.active {
+            background-color: #1d4ed8;
+            color: white;
+            border-color: #1d4ed8;
         }
     </style>
 </head>
@@ -73,7 +88,8 @@
             </div>
         </header>
         <main class="p-4 md:p-8">
-            <div class="bg-white p-6 rounded-xl shadow-lg">
+            <div id="grant-selection-area" class="mb-6"></div>
+            <div id="grant-details-area" class="bg-white p-6 rounded-xl shadow-lg hidden">
                 <!-- === INFORMASI DOSEN & HIBAH === -->
                 <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
                     <h3 class="text-lg font-semibold mb-3 text-gray-800">Informasi Dosen & Hibah</h3>
@@ -156,7 +172,7 @@
         <header class="bg-white shadow-md p-4 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-blue-800">Dasbor Admin</h1>
-                <p class="text-gray-600">Monitoring Data Dosen dan Unggahan Kontrak</p>
+                <p class="text-gray-600">Manajemen Data Hibah</p>
             </div>
             <div class="text-right">
                 <p id="admin-datetime" class="font-semibold text-gray-700"></p>
@@ -166,22 +182,24 @@
         <main class="p-4 md:p-8">
             <div class="bg-white p-6 rounded-xl shadow-lg">
                  <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Manajemen Data Dosen Penerima Hibah</h2>
-                    <button id="refresh-data-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300">Refresh Data</button>
+                    <h2 class="text-xl font-bold">Manajemen Data Hibah Dosen</h2>
+                    <div>
+                        <button id="add-grant-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition duration-300 mr-2">Tambah Hibah Baru</button>
+                        <button id="refresh-data-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300">Refresh Data</button>
+                    </div>
                 </div>
-                <p id="admin-info" class="text-sm text-center my-2"></p>
+                <p id="admin-info" class="text-sm text-center my-2 h-4"></p>
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white border">
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="py-2 px-4 border-b text-left">Nama Dosen</th>
                                 <th class="py-2 px-4 border-b text-left">Judul Proyek</th>
-                                <th class="py-2 px-4 border-b text-left">URL Kontrak</th>
                                 <th class="py-2 px-4 border-b text-left">File Unggahan</th>
-                                <th class="py-2 px-4 border-b text-left">Aksi</th>
+                                <th class="py-2 px-4 border-b text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-lecturer-list">
+                        <tbody id="admin-grant-list">
                             <!-- Data akan dimuat di sini oleh JavaScript -->
                         </tbody>
                     </table>
@@ -189,6 +207,59 @@
             </div>
         </main>
     </div>
+    
+    <!-- === MODAL TAMBAH/EDIT HIBAH === -->
+    <div id="grant-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl">
+            <div class="p-6 border-b">
+                <h3 id="modal-title" class="text-xl font-bold text-gray-800">Tambah Data Hibah Baru</h3>
+            </div>
+            <form id="grant-form">
+                <div class="p-6 max-h-[70vh] overflow-y-auto modal-scrollbar">
+                    <input type="hidden" id="form-edit-grant-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="lecturer_nidn" class="block text-sm font-medium text-gray-700">NIDN Dosen</label>
+                            <input type="text" id="lecturer_nidn" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required placeholder="NIDN Dosen yang sudah terdaftar">
+                        </div>
+                        <div>
+                            <label for="funding_amount" class="block text-sm font-medium text-gray-700">Jumlah Pendanaan (angka saja)</label>
+                            <input type="number" id="funding_amount" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="project_title" class="block text-sm font-medium text-gray-700">Judul Proyek</label>
+                            <textarea id="project_title" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="main_contract_number" class="block text-sm font-medium text-gray-700">No. Kontrak Induk</label>
+                            <input type="text" id="main_contract_number" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="derivative_contract_number" class="block text-sm font-medium text-gray-700">No. Kontrak Turunan</label>
+                            <input type="text" id="derivative_contract_number" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="contract_number" class="block text-sm font-medium text-gray-700">No. Kontrak (LPPM & Dosen)</label>
+                            <input type="text" id="contract_number" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="contract_url" class="block text-sm font-medium text-gray-700">URL Pratinjau Kontrak</label>
+                            <input type="url" id="contract_url" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="assignment_letter_url" class="block text-sm font-medium text-gray-700">URL Surat Tugas</label>
+                            <input type="url" id="assignment_letter_url" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-gray-50 flex justify-end gap-4">
+                    <button type="button" id="cancel-modal-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <script type="module">
         // =================================================================================
@@ -203,12 +274,23 @@
 
         // --- VARIABEL GLOBAL & DOM ELEMENTS ---
         let currentUser = null;
-        let currentLecturerData = null;
+        let currentGrants = [];
+        let selectedGrant = null;
+
         const loginPage = document.getElementById('login-page');
         const dosenDashboard = document.getElementById('dosen-dashboard');
         const adminDashboard = document.getElementById('admin-dashboard');
         const loginForm = document.getElementById('login-form');
         const loginError = document.getElementById('login-error');
+        
+        // Admin Modal Elements
+        const grantModal = document.getElementById('grant-modal');
+        const grantForm = document.getElementById('grant-form');
+        const modalTitle = document.getElementById('modal-title');
+        const addGrantBtn = document.getElementById('add-grant-btn');
+        const cancelModalBtn = document.getElementById('cancel-modal-btn');
+        const adminInfo = document.getElementById('admin-info');
+
 
         // --- FUNGSI UTAMA ---
 
@@ -258,10 +340,8 @@
             return url;
         }
 
-
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Menghapus spasi di awal/akhir input
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             loginError.textContent = '';
@@ -271,42 +351,47 @@
                 sessionStorage.setItem('user', JSON.stringify(currentUser));
                 loadAdminDashboard();
             } else {
-                if (supabaseKey.includes('MASUKKAN_KUNCI_API_ANON_ANDA_DI_SINI')) {
-                    loginError.textContent = 'Konfigurasi Supabase belum selesai. Mohon masukkan API Key.';
-                    return;
-                }
-
-                const { data, error } = await supabaseClient
+                const { data: lecturer, error: lecturerError } = await supabaseClient
                     .from('lecturers')
                     .select('*')
                     .eq('nidn', username)
                     .single();
 
-                // Menambahkan log error untuk debugging
-                if (error && error.message !== 'JSON object requested, multiple (or no) rows returned') {
-                    console.error("Supabase error:", error);
+                if (lecturerError && lecturerError.message !== 'JSON object requested, multiple (or no) rows returned') {
+                    console.error("Supabase error:", lecturerError);
                     loginError.textContent = 'Terjadi kesalahan saat menghubungi server.';
                     return;
                 }
 
-                if (data && password === username) {
-                    currentUser = { type: 'dosen', nidn: username, name: data.name };
+                if (lecturer && password === username) {
+                    const { data: grants, error: grantsError } = await supabaseClient
+                        .from('grants')
+                        .select('*')
+                        .eq('lecturer_nidn', username);
+
+                    if (grantsError) {
+                         loginError.textContent = 'Gagal mengambil data hibah.';
+                         return;
+                    }
+                    
+                    currentUser = { type: 'dosen', lecturerData: lecturer, grantsData: grants };
                     sessionStorage.setItem('user', JSON.stringify(currentUser));
                     loadDosenDashboard();
+
                 } else {
                     loginError.textContent = 'Username atau Password salah.';
                 }
             }
         });
 
-        async function loadUploadHistory(nidn) {
+        async function loadUploadHistory(grantId) {
             const historyListDiv = document.getElementById('upload-history-list');
             historyListDiv.innerHTML = '<p class="text-gray-500">Memuat histori...</p>';
 
             const { data: files, error: filesError } = await supabaseClient
                 .from('uploaded_files')
                 .select('*')
-                .eq('nidn', nidn);
+                .eq('grant_id', grantId);
 
             if (filesError) {
                 historyListDiv.innerHTML = '<p class="text-red-500">Gagal memuat histori unggahan.</p>';
@@ -330,46 +415,85 @@
             }
         }
 
-        async function loadDosenDashboard() {
-            const { data, error } = await supabaseClient
-                .from('lecturers')
-                .select('*')
-                .eq('nidn', currentUser.nidn)
-                .single();
+        function displayGrantDetails(grantData) {
+            selectedGrant = grantData;
+            const detailsArea = document.getElementById('grant-details-area');
             
-            if (error || !data) {
-                alert('Gagal memuat data dosen.');
+            if (!selectedGrant) {
+                detailsArea.classList.add('hidden');
                 return;
             }
-            
-            currentLecturerData = data;
+            detailsArea.classList.remove('hidden');
 
-            document.getElementById('dosen-name').textContent = `Selamat datang, ${data.name}`;
-            document.getElementById('info-fullname').textContent = data.fullname;
-            document.getElementById('info-nidn').textContent = data.nidn;
-            document.getElementById('info-position').textContent = data.position;
-            document.getElementById('info-studyprogram').textContent = data.study_program;
-            document.getElementById('info-project-title').textContent = data.project_title || '-';
-
-            // Mengisi nomor kontrak dan tanggal dari satu field
-            document.getElementById('info-main-contract').textContent = data.main_contract_number || '-';
-            document.getElementById('info-derivative-contract').textContent = data.derivative_contract_number || '-';
-            document.getElementById('info-contract-number').textContent = data.contract_number || '-';
+            document.getElementById('info-project-title').textContent = selectedGrant.project_title || '-';
+            document.getElementById('info-main-contract').textContent = selectedGrant.main_contract_number || '-';
+            document.getElementById('info-derivative-contract').textContent = selectedGrant.derivative_contract_number || '-';
+            document.getElementById('info-contract-number').textContent = selectedGrant.contract_number || '-';
             
-            const funding = data.funding_amount ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(data.funding_amount) : '-';
+            const funding = selectedGrant.funding_amount ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(selectedGrant.funding_amount) : '-';
             document.getElementById('info-funding').textContent = funding;
 
-            document.getElementById('contract-preview').src = data.contract_url || '';
+            document.getElementById('contract-preview').src = selectedGrant.contract_url || '';
             
-            document.getElementById('download-contract-btn').href = getGoogleDriveDownloadUrl(data.contract_url);
-            document.getElementById('download-assignment-btn').href = getGoogleDriveDownloadUrl(data.assignment_letter_url);
+            document.getElementById('download-contract-btn').href = getGoogleDriveDownloadUrl(selectedGrant.contract_url);
+            document.getElementById('download-assignment-btn').href = getGoogleDriveDownloadUrl(selectedGrant.assignment_letter_url);
             
-            loadUploadHistory(currentUser.nidn);
+            loadUploadHistory(selectedGrant.id);
+        }
+
+        async function loadDosenDashboard() {
+            const lecturerData = currentUser.lecturerData;
+            currentGrants = currentUser.grantsData;
+            
+            if (!lecturerData || !currentGrants) {
+                alert('Sesi tidak valid atau data tidak lengkap.');
+                logout();
+                return;
+            }
+
+            // Display static lecturer info
+            document.getElementById('dosen-name').textContent = `Selamat datang, ${lecturerData.name}`;
+            document.getElementById('info-fullname').textContent = lecturerData.fullname || '-';
+            document.getElementById('info-nidn').textContent = lecturerData.nidn || '-';
+            document.getElementById('info-position').textContent = lecturerData.position || '-';
+            document.getElementById('info-studyprogram').textContent = lecturerData.study_program || '-';
+
+            // Create grant selection tabs/buttons
+            const selectionArea = document.getElementById('grant-selection-area');
+            selectionArea.innerHTML = '';
+            if (currentGrants.length > 1) {
+                const tabContainer = document.createElement('div');
+                tabContainer.className = 'flex flex-wrap gap-2 border-b pb-2 mb-4';
+                currentGrants.forEach((grant, index) => {
+                    const tab = document.createElement('button');
+                    tab.textContent = `Proyek ${index + 1}: ${grant.project_title.substring(0, 40)}...`;
+                    tab.className = `grant-tab px-4 py-2 rounded-md border text-sm font-semibold transition`;
+                    tab.dataset.grantId = grant.id;
+                    if (index === 0) tab.classList.add('active');
+                    tabContainer.appendChild(tab);
+                });
+                selectionArea.appendChild(tabContainer);
+            }
+
+            // Display details for the first grant by default
+            displayGrantDetails(currentGrants[0] || null);
+
             updateGreeting();
             updateDateTime();
             setInterval(updateDateTime, 1000);
             showPage('dosen-dashboard');
         }
+
+        document.getElementById('grant-selection-area').addEventListener('click', (e) => {
+            if (e.target.classList.contains('grant-tab')) {
+                document.querySelectorAll('.grant-tab').forEach(tab => tab.classList.remove('active'));
+                e.target.classList.add('active');
+
+                const selectedId = parseInt(e.target.dataset.grantId);
+                const grantToDisplay = currentGrants.find(g => g.id === selectedId);
+                displayGrantDetails(grantToDisplay);
+            }
+        });
 
         function loadAdminDashboard() {
             updateDateTime();
@@ -383,6 +507,11 @@
             const file = fileInput.files[0];
             const uploadStatus = document.getElementById('upload-status');
 
+            if (!selectedGrant) {
+                alert('Silakan pilih proyek terlebih dahulu.');
+                return;
+            }
+
             if (!file) {
                 uploadStatus.textContent = 'Silakan pilih file terlebih dahulu.';
                 uploadStatus.className = 'text-sm mt-2 text-red-500';
@@ -392,7 +521,7 @@
             uploadStatus.textContent = 'Mengunggah file...';
             uploadStatus.className = 'text-sm mt-2 text-blue-500';
 
-            const fileName = `${currentUser.nidn}_${Date.now()}_${file.name}`;
+            const fileName = `${currentUser.lecturerData.nidn}_${selectedGrant.id}_${Date.now()}_${file.name}`;
             
             const { data: uploadData, error: uploadError } = await supabaseClient.storage
                 .from('contracts')
@@ -404,12 +533,11 @@
                 return;
             }
             
-            const { data: userDetails } = await supabaseClient.from('lecturers').select('fullname').eq('nidn', currentUser.nidn).single();
             const { error: dbError } = await supabaseClient
                 .from('uploaded_files')
                 .insert([{ 
-                    nidn: currentUser.nidn, 
-                    nama_dosen: userDetails.fullname,
+                    grant_id: selectedGrant.id,
+                    nidn: currentUser.lecturerData.nidn,
                     nama_file: file.name,
                     path_file: uploadData.path,
                     url_file: `${supabaseUrl}/storage/v1/object/public/contracts/${uploadData.path}`
@@ -420,92 +548,161 @@
             } else {
                 uploadStatus.textContent = 'File berhasil diunggah!';
                 fileInput.value = '';
-                loadUploadHistory(currentUser.nidn);
+                loadUploadHistory(selectedGrant.id);
             }
         });
 
         async function fetchAndDisplayAdminData() {
-            const listBody = document.getElementById('admin-lecturer-list');
-            listBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Memuat data...</td></tr>';
+            const listBody = document.getElementById('admin-grant-list');
+            listBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>';
 
-            const { data: lecturers, error: lecturersError } = await supabaseClient.from('lecturers').select('*');
-            const { data: files, error: filesError } = await supabaseClient.from('uploaded_files').select('*');
-
-            if (lecturersError || filesError) {
-                listBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Gagal memuat data.</td></tr>`;
+            const { data: grants, error: grantsError } = await supabaseClient.from('grants').select('*');
+            const { data: lecturers, error: lecturersError } = await supabaseClient.from('lecturers').select('nidn, fullname');
+            const { data: files, error: filesError } = await supabaseClient.from('uploaded_files').select('grant_id');
+            
+            if (grantsError || lecturersError || filesError) {
+                listBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-500">Gagal memuat data.</td></tr>`;
                 return;
             }
 
+            const lecturerMap = new Map(lecturers.map(l => [l.nidn, l.fullname]));
+            const fileCountMap = new Map();
+            files.forEach(file => {
+                fileCountMap.set(file.grant_id, (fileCountMap.get(file.grant_id) || 0) + 1);
+            });
+
+
             listBody.innerHTML = '';
-            lecturers.forEach(lecturer => {
-                const uploadedFile = files.find(f => f.nidn === lecturer.nidn);
+            grants.forEach(grant => {
                 const row = document.createElement('tr');
-                row.setAttribute('data-nidn', lecturer.nidn);
-                
+                const fileCount = fileCountMap.get(grant.id) || 0;
+
                 row.innerHTML = `
                     <td class="py-2 px-4 border-b align-top">
-                        <p class="font-semibold">${lecturer.fullname}</p>
-                        <p class="text-xs text-gray-600">${lecturer.nidn}</p>
+                        <p class="font-semibold">${lecturerMap.get(grant.lecturer_nidn) || 'N/A'}</p>
+                        <p class="text-xs text-gray-600 font-mono">${grant.lecturer_nidn}</p>
                     </td>
-                    <td class="py-2 px-4 border-b align-top text-xs">${lecturer.project_title || '-'}</td>
-                    <td class="py-2 px-4 border-b align-top">
-                        <input type="text" class="url-input w-full border rounded px-2 py-1 text-sm" value="${lecturer.contract_url || ''}">
-                    </td>
-                    <td class="py-2 px-4 border-b align-top text-sm">
-                        ${uploadedFile ? `<a href="${uploadedFile.url_file}" target="_blank" class="text-blue-600 hover:underline">${uploadedFile.nama_file}</a><br><span class="text-xs text-gray-500">(${new Date(uploadedFile.created_at).toLocaleString('id-ID')})</span>` : 'Belum ada'}
-                    </td>
-                    <td class="py-2 px-4 border-b align-top">
-                        <button class="save-url-btn bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600 mb-1 w-full">Simpan URL</button>
-                        ${uploadedFile ? `<button data-file-id="${uploadedFile.id}" data-file-path="${uploadedFile.path_file}" class="delete-file-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 w-full">Hapus File</button>` : ''}
+                    <td class="py-2 px-4 border-b align-top text-xs">${grant.project_title || '-'}</td>
+                    <td class="py-2 px-4 border-b align-top text-sm">${fileCount > 0 ? `${fileCount} file` : 'Belum ada'}</td>
+                    <td class="py-2 px-4 border-b align-top text-center">
+                        <button data-grant-id="${grant.id}" class="edit-grant-btn bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">Edit</button>
+                        <button data-grant-id="${grant.id}" class="delete-grant-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Hapus</button>
                     </td>
                 `;
                 listBody.appendChild(row);
             });
         }
         
-        document.getElementById('admin-lecturer-list').addEventListener('click', async (e) => {
-            const adminInfo = document.getElementById('admin-info');
-            adminInfo.textContent = '';
+        // --- ADMIN MODAL & CRUD FUNCTIONS ---
+        
+        function openGrantModal(mode = 'add', grantData = null) {
+            grantForm.reset();
+            const nidnInput = document.getElementById('lecturer_nidn');
+            if (mode === 'add') {
+                modalTitle.textContent = 'Tambah Data Hibah Baru';
+                document.getElementById('form-edit-grant-id').value = '';
+                nidnInput.disabled = false;
+            } else if (mode === 'edit' && grantData) {
+                modalTitle.textContent = 'Edit Data Hibah';
+                document.getElementById('form-edit-grant-id').value = grantData.id;
+                nidnInput.disabled = true;
 
-            if (e.target.classList.contains('save-url-btn')) {
-                const row = e.target.closest('tr');
-                const nidn = row.dataset.nidn;
-                const newUrl = row.querySelector('.url-input').value;
+                // Populate form
+                nidnInput.value = grantData.lecturer_nidn || '';
+                document.getElementById('funding_amount').value = grantData.funding_amount || '';
+                document.getElementById('project_title').value = grantData.project_title || '';
+                document.getElementById('main_contract_number').value = grantData.main_contract_number || '';
+                document.getElementById('derivative_contract_number').value = grantData.derivative_contract_number || '';
+                document.getElementById('contract_number').value = grantData.contract_number || '';
+                document.getElementById('contract_url').value = grantData.contract_url || '';
+                document.getElementById('assignment_letter_url').value = grantData.assignment_letter_url || '';
+            }
+            grantModal.classList.remove('hidden');
+        }
+        
+        function closeGrantModal() {
+            grantModal.classList.add('hidden');
+        }
 
-                const { error } = await supabaseClient
-                    .from('lecturers')
-                    .update({ contract_url: newUrl })
-                    .eq('nidn', nidn);
-                
-                if (error) {
-                    adminInfo.textContent = `Gagal menyimpan URL untuk NIDN ${nidn}.`;
+        addGrantBtn.addEventListener('click', () => openGrantModal('add'));
+        cancelModalBtn.addEventListener('click', closeGrantModal);
+        
+        grantForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const grantId = document.getElementById('form-edit-grant-id').value;
+            const isEditMode = !!grantId;
+            
+            const formData = {
+                lecturer_nidn: document.getElementById('lecturer_nidn').value,
+                funding_amount: document.getElementById('funding_amount').value ? parseInt(document.getElementById('funding_amount').value) : null,
+                project_title: document.getElementById('project_title').value,
+                main_contract_number: document.getElementById('main_contract_number').value,
+                derivative_contract_number: document.getElementById('derivative_contract_number').value,
+                contract_number: document.getElementById('contract_number').value,
+                contract_url: document.getElementById('contract_url').value,
+                assignment_letter_url: document.getElementById('assignment_letter_url').value,
+            };
+
+            let error;
+            if (isEditMode) {
+                const { error: updateError } = await supabaseClient
+                    .from('grants')
+                    .update(formData)
+                    .eq('id', grantId);
+                error = updateError;
+            } else {
+                 const { data: lecturerExists } = await supabaseClient.from('lecturers').select('nidn').eq('nidn', formData.lecturer_nidn).single();
+                 if(!lecturerExists){
+                    alert(`Error: Dosen dengan NIDN ${formData.lecturer_nidn} tidak ditemukan. Silakan tambahkan data dosen terlebih dahulu jika belum ada.`);
+                    return;
+                 }
+                const { error: insertError } = await supabaseClient
+                    .from('grants')
+                    .insert([formData]);
+                error = insertError;
+            }
+
+            if (error) {
+                adminInfo.textContent = `Gagal menyimpan data: ${error.message}`;
+                adminInfo.className = 'text-sm text-center my-2 h-4 text-red-500';
+            } else {
+                adminInfo.textContent = `Data hibah berhasil ${isEditMode ? 'diperbarui' : 'ditambahkan'}.`;
+                adminInfo.className = 'text-sm text-center my-2 h-4 text-green-500';
+                closeGrantModal();
+                fetchAndDisplayAdminData();
+            }
+        });
+
+        document.getElementById('admin-grant-list').addEventListener('click', async (e) => {
+            const target = e.target.closest('button');
+            if (!target) return;
+
+            const grantId = target.dataset.grantId;
+            
+            if (target.classList.contains('edit-grant-btn')) {
+                const { data, error } = await supabaseClient.from('grants').select('*').eq('id', grantId).single();
+                if (data) {
+                    openGrantModal('edit', data);
                 } else {
-                    adminInfo.textContent = `URL untuk NIDN ${nidn} berhasil disimpan.`;
+                    alert(`Gagal mengambil data untuk hibah dengan ID ${grantId}`);
                 }
             }
 
-            if (e.target.classList.contains('delete-file-btn')) {
-                const fileId = e.target.dataset.fileId;
-                const filePath = e.target.dataset.filePath;
-
-                if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
-                    const { error: storageError } = await supabaseClient.storage.from('contracts').remove([filePath]);
-                    if (storageError) {
-                         adminInfo.textContent = `Gagal menghapus file dari storage: ${storageError.message}`;
-                         return;
-                    }
-                    const { error: dbError } = await supabaseClient.from('uploaded_files').delete().eq('id', fileId);
-                    if (dbError) {
-                        adminInfo.textContent = `Gagal menghapus data file: ${dbError.message}`;
-                    } else {
-                        adminInfo.textContent = 'File berhasil dihapus.';
+            if (target.classList.contains('delete-grant-btn')) {
+                 if (confirm(`Apakah Anda yakin ingin menghapus data hibah ini? Ini tidak bisa dibatalkan.`)) {
+                     const { error } = await supabaseClient.from('grants').delete().eq('id', grantId);
+                     if (error) {
+                        adminInfo.textContent = `Gagal menghapus data: ${error.message}`;
+                        adminInfo.className = 'text-sm text-center my-2 h-4 text-red-500';
+                     } else {
+                        adminInfo.textContent = 'Data hibah berhasil dihapus.';
+                        adminInfo.className = 'text-sm text-center my-2 h-4 text-green-500';
                         fetchAndDisplayAdminData();
-                    }
-                }
+                     }
+                 }
             }
         });
         
-        // Event listener untuk hapus file di histori dosen
         document.getElementById('upload-history-list').addEventListener('click', async (e) => {
             if (e.target.classList.contains('delete-history-btn')) {
                 const fileId = e.target.dataset.fileId;
@@ -515,25 +712,19 @@
 
                 if (confirm('Apakah Anda yakin ingin menghapus file unggahan ini?')) {
                     uploadStatus.textContent = 'Menghapus file...';
-                    uploadStatus.className = 'text-sm mt-2 text-blue-500';
                     
-                    // Hapus dari Storage
                     const { error: storageError } = await supabaseClient.storage.from('contracts').remove([filePath]);
                     if (storageError) {
                         uploadStatus.textContent = `Gagal menghapus file: ${storageError.message}`;
-                        uploadStatus.className = 'text-sm mt-2 text-red-500';
                         return;
                     }
 
-                    // Hapus dari Database
                     const { error: dbError } = await supabaseClient.from('uploaded_files').delete().eq('id', fileId);
                     if (dbError) {
                         uploadStatus.textContent = `Gagal menghapus data file: ${dbError.message}`;
-                        uploadStatus.className = 'text-sm mt-2 text-red-500';
                     } else {
                         uploadStatus.textContent = 'File berhasil dihapus.';
-                        uploadStatus.className = 'text-sm mt-2 text-green-500';
-                        loadUploadHistory(currentUser.nidn); // Refresh histori
+                        loadUploadHistory(selectedGrant.id);
                     }
                 }
             }
@@ -541,7 +732,8 @@
 
         function logout() {
             currentUser = null;
-            currentLecturerData = null;
+            currentGrants = [];
+            selectedGrant = null;
             sessionStorage.removeItem('user');
             const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
             for (let i = 1; i < interval_id; i++) window.clearInterval(i);
