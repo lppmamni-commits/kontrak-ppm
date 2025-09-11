@@ -12,8 +12,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase JS Client (Updated to @latest) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest"></script>
 
     <style>
         body {
@@ -357,10 +357,12 @@
                     .eq('nidn', username)
                     .single();
 
-                if (lecturerError && lecturerError.message !== 'JSON object requested, multiple (or no) rows returned') {
-                    console.error("Supabase error:", lecturerError);
-                    loginError.textContent = 'Terjadi kesalahan saat menghubungi server.';
-                    return;
+                if (lecturerError) {
+                    if (lecturerError.message !== 'JSON object requested, multiple (or no) rows returned') {
+                        console.error("Supabase error:", lecturerError);
+                        loginError.textContent = 'Koneksi ke database gagal. Periksa jaringan internet Anda atau hubungi admin.';
+                        return;
+                    }
                 }
 
                 if (lecturer && password === username) {
