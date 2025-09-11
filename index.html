@@ -195,7 +195,7 @@
         // KONFIGURASI SUPABASE
         // =================================================================================
         const supabaseUrl = 'https://jusxtsyewrmkavdpwzlf.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1c3h0c3lld3Jta2F2ZHB3emxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NjgzOTgsImV4cCI6MjA3MTM0NDM5OH0.gf8gDi8PxrPqNLWEiJ-cd6Qm-tKC5sEZAlUrPDivAk';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1c3h0c3lld3Jta2F2ZHB3emxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NjgzOTgsImV4cCI6MjA3MTM0NDM5OH0.gf8gDi8PxrPqNLWEi8J-cd6Qm-tKC5sEZAlUrPDivAk';
         // =================================================================================
 
         const { createClient } = supabase; 
@@ -261,8 +261,9 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            // Menghapus spasi di awal/akhir input
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
             loginError.textContent = '';
 
             if (username === 'hibah123' && password === 'hibah123') {
@@ -270,11 +271,23 @@
                 sessionStorage.setItem('user', JSON.stringify(currentUser));
                 loadAdminDashboard();
             } else {
+                if (supabaseKey.includes('MASUKKAN_KUNCI_API_ANON_ANDA_DI_SINI')) {
+                    loginError.textContent = 'Konfigurasi Supabase belum selesai. Mohon masukkan API Key.';
+                    return;
+                }
+
                 const { data, error } = await supabaseClient
                     .from('lecturers')
                     .select('*')
                     .eq('nidn', username)
                     .single();
+
+                // Menambahkan log error untuk debugging
+                if (error && error.message !== 'JSON object requested, multiple (or no) rows returned') {
+                    console.error("Supabase error:", error);
+                    loginError.textContent = 'Terjadi kesalahan saat menghubungi server.';
+                    return;
+                }
 
                 if (data && password === username) {
                     currentUser = { type: 'dosen', nidn: username, name: data.name };
