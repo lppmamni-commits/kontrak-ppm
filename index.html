@@ -19,20 +19,6 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Style untuk scrollbar di iframe agar lebih minimalis */
-        iframe::-webkit-scrollbar {
-            width: 8px;
-        }
-        iframe::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        iframe::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-        iframe::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
         .modal-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
@@ -54,7 +40,7 @@
 
     <!-- === HALAMAN LOGIN === -->
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4 bg-cover bg-center" style="background-image: url('https://blogger.googleusercontent.com/img/a/AVvXsEi8R2GgQbwNbFxIaqnLliEJ-G5WaBQXtA9094A1bPRlsImcjObWj_pUg8AJawHwlUxr6UqcmEprm65H175w9fi3Xk9HCiaTyPLRyO_-Jr2_Vl3qCyG1Fgi4fFNFNIdnq4T98AfvtApLxLU7oIn8EC_D7hWvjboyXn7c2cfIl_E61aYwQ6VwiO4DMg02YdS3');">
-        <div class="w-full max-w-md bg-white/20 backdrop-blur-sm rounded-xl shadow-lg p-8">
+        <div class="w-full max-w-md bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-8">
             <div class="text-center mb-8">
                 <img src="https://sia.unimar-amni.ac.id/lib/img/logo.png" alt="Logo UNIMAR AMNI" class="w-24 h-24 mx-auto mb-4">
                 <h1 class="text-2xl font-bold text-blue-800">Sistem Kontrak PPM</h1>
@@ -140,22 +126,23 @@
                         <!-- Konten histori akan dimuat oleh JavaScript -->
                     </div>
                 </div>
-
-                <h2 class="text-xl font-bold mb-4">Pratinjau Kontrak PPM Hibah Diktisaintek TA 2025</h2>
-                <div class="border rounded-lg overflow-hidden mb-6">
-                    <iframe id="contract-preview" class="w-full h-[70vh]" src=""></iframe>
-                </div>
-                <div class="flex flex-col md:flex-row gap-4 items-start">
-                    <div class="flex flex-wrap gap-2">
-                        <a id="download-contract-btn" href="#" download="kontrak-ppm.pdf" class="text-center bg-green-600 text-white font-bold py-2 px-5 rounded-md hover:bg-green-700 transition duration-300">
-                            Unduh Kontrak (.pdf)
-                        </a>
-                        <a id="download-assignment-btn" href="#" download="surat-tugas.pdf" class="text-center bg-blue-600 text-white font-bold py-2 px-5 rounded-md hover:bg-blue-700 transition duration-300">
-                            Unduh Surat Tugas
-                        </a>
+                
+                 <!-- === AKSI DOKUMEN === -->
+                <div class="flex flex-col md:flex-row gap-4 items-start pt-4 border-t">
+                    <div class="flex-1">
+                         <h3 class="text-lg font-semibold mb-3 text-gray-800">Kirim Dokumen ke WhatsApp Anda</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="send-wa-contract-btn" class="text-center bg-green-600 text-white font-bold py-2 px-5 rounded-md hover:bg-green-700 transition duration-300">
+                                Kirim Link Kontrak
+                            </button>
+                            <button id="send-wa-assignment-btn" class="text-center bg-blue-600 text-white font-bold py-2 px-5 rounded-md hover:bg-blue-700 transition duration-300">
+                                Kirim Link Surat Tugas
+                            </button>
+                        </div>
                     </div>
                     <div class="w-full flex-1">
-                        <label for="file-upload" class="block text-sm font-medium text-gray-700 mb-2">Unggah Kontrak Perbaikan (PDF/DOCX):</label>
+                         <h3 class="text-lg font-semibold mb-3 text-gray-800">Unggah Dokumen Perbaikan</h3>
+                        <label for="file-upload" class="sr-only">Unggah Kontrak Perbaikan (PDF/DOCX):</label>
                         <div class="flex gap-2">
                             <input type="file" id="file-upload" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept=".pdf,.doc,.docx">
                             <button id="upload-btn" class="bg-blue-700 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-800 transition duration-300">Unggah</button>
@@ -172,7 +159,7 @@
         <header class="bg-white shadow-md p-4 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-blue-800">Dasbor Admin</h1>
-                <p class="text-gray-600">Manajemen Data Hibah</p>
+                <p class="text-gray-600">Manajemen Data Hibah & Dosen</p>
             </div>
             <div class="text-right">
                 <p id="admin-datetime" class="font-semibold text-gray-700"></p>
@@ -184,8 +171,9 @@
                  <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold">Manajemen Data Hibah Dosen</h2>
                     <div>
-                        <button id="add-grant-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition duration-300 mr-2">Tambah Hibah Baru</button>
-                        <button id="refresh-data-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300">Refresh Data</button>
+                        <button id="manage-lecturers-btn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-700 transition duration-300">Manajemen Dosen</button>
+                        <button id="add-grant-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition duration-300">Tambah Hibah Baru</button>
+                        <button id="refresh-data-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300 ml-2">Refresh Data</button>
                     </div>
                 </div>
                 <p id="admin-info" class="text-sm text-center my-2 h-4"></p>
@@ -199,9 +187,7 @@
                                 <th class="py-2 px-4 border-b text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-grant-list">
-                            <!-- Data akan dimuat di sini oleh JavaScript -->
-                        </tbody>
+                        <tbody id="admin-grant-list"></tbody>
                     </table>
                 </div>
             </div>
@@ -209,10 +195,10 @@
     </div>
     
     <!-- === MODAL TAMBAH/EDIT HIBAH === -->
-    <div id="grant-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+    <div id="grant-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-20">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl">
             <div class="p-6 border-b">
-                <h3 id="modal-title" class="text-xl font-bold text-gray-800">Tambah Data Hibah Baru</h3>
+                <h3 id="grant-modal-title" class="text-xl font-bold text-gray-800">Tambah Data Hibah Baru</h3>
             </div>
             <form id="grant-form">
                 <div class="p-6 max-h-[70vh] overflow-y-auto modal-scrollbar">
@@ -243,18 +229,72 @@
                             <input type="text" id="contract_number" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
                         <div class="md:col-span-2">
-                            <label for="contract_url" class="block text-sm font-medium text-gray-700">URL Pratinjau Kontrak</label>
-                            <input type="url" id="contract_url" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="contract_url" class="block text-sm font-medium text-gray-700">URL Unduh Kontrak</label>
+                            <input type="url" id="contract_url" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Contoh: Link Google Drive">
                         </div>
                         <div class="md:col-span-2">
-                            <label for="assignment_letter_url" class="block text-sm font-medium text-gray-700">URL Surat Tugas</label>
-                            <input type="url" id="assignment_letter_url" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                            <label for="assignment_letter_url" class="block text-sm font-medium text-gray-700">URL Unduh Surat Tugas</label>
+                            <input type="url" id="assignment_letter_url" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Contoh: Link Google Drive">
                         </div>
                     </div>
                 </div>
                 <div class="p-6 bg-gray-50 flex justify-end gap-4">
-                    <button type="button" id="cancel-modal-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300">Batal</button>
+                    <button type="button" class="cancel-modal-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300">Batal</button>
                     <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- === MODAL MANAJEMEN DOSEN === -->
+    <div id="lecturer-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-30">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-800">Manajemen Data Dosen</h3>
+                <button type="button" class="cancel-modal-btn text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <div class="p-6 max-h-[70vh] overflow-y-auto modal-scrollbar">
+                <table class="min-w-full bg-white border">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="py-2 px-4 border-b text-left">Nama</th>
+                            <th class="py-2 px-4 border-b text-left">NIDN</th>
+                            <th class="py-2 px-4 border-b text-left">No. WhatsApp</th>
+                            <th class="py-2 px-4 border-b text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-lecturer-list"></tbody>
+                </table>
+            </div>
+            <div class="p-6 bg-gray-50 flex justify-end">
+                <button type="button" class="cancel-modal-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300">Tutup</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- === MODAL EDIT DOSEN === -->
+    <div id="edit-lecturer-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-40">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+            <div class="p-6 border-b">
+                <h3 class="text-xl font-bold text-gray-800">Edit Data Dosen</h3>
+            </div>
+            <form id="edit-lecturer-form">
+                <div class="p-6">
+                    <input type="hidden" id="edit-lecturer-nidn">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="edit-fullname" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                            <input type="text" id="edit-fullname" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label for="edit-whatsapp" class="block text-sm font-medium text-gray-700">No. WhatsApp (Format: 62...)</label>
+                            <input type="text" id="edit-whatsapp" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="6281234567890">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-gray-50 flex justify-end gap-4">
+                    <button type="button" class="cancel-modal-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -286,10 +326,14 @@
         // Admin Modal Elements
         const grantModal = document.getElementById('grant-modal');
         const grantForm = document.getElementById('grant-form');
-        const modalTitle = document.getElementById('modal-title');
+        const grantModalTitle = document.getElementById('grant-modal-title');
         const addGrantBtn = document.getElementById('add-grant-btn');
-        const cancelModalBtn = document.getElementById('cancel-modal-btn');
         const adminInfo = document.getElementById('admin-info');
+        
+        const lecturerModal = document.getElementById('lecturer-modal');
+        const editLecturerModal = document.getElementById('edit-lecturer-modal');
+        const editLecturerForm = document.getElementById('edit-lecturer-form');
+        const manageLecturersBtn = document.getElementById('manage-lecturers-btn');
 
 
         // --- FUNGSI UTAMA ---
@@ -318,26 +362,6 @@
             else if (hour >= 14.5 && hour < 18) greetingText = "Selamat Sore";
             else greetingText = "Selamat Malam";
             document.getElementById('greeting').textContent = greetingText;
-        }
-
-        function getGoogleDriveDownloadUrl(url) {
-            if (!url) return '#';
-            let fileId = null;
-            const patterns = [
-                /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/,
-                /docs\.google\.com\/(?:document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)/
-            ];
-            for (const pattern of patterns) {
-                const match = url.match(pattern);
-                if (match && match[1]) {
-                    fileId = match[1];
-                    break;
-                }
-            }
-            if (fileId) {
-                return `https://drive.google.com/uc?export=download&id=${fileId}`;
-            }
-            return url;
         }
 
         loginForm.addEventListener('submit', async (e) => {
@@ -385,6 +409,8 @@
                 }
             }
         });
+
+        // --- FUNGSI-FUNGSI DASBOR DOSEN ---
 
         async function loadUploadHistory(grantId) {
             const historyListDiv = document.getElementById('upload-history-list');
@@ -434,11 +460,6 @@
             
             const funding = selectedGrant.funding_amount ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(selectedGrant.funding_amount) : '-';
             document.getElementById('info-funding').textContent = funding;
-
-            document.getElementById('contract-preview').src = selectedGrant.contract_url || '';
-            
-            document.getElementById('download-contract-btn').href = getGoogleDriveDownloadUrl(selectedGrant.contract_url);
-            document.getElementById('download-assignment-btn').href = getGoogleDriveDownloadUrl(selectedGrant.assignment_letter_url);
             
             loadUploadHistory(selectedGrant.id);
         }
@@ -460,7 +481,6 @@
             document.getElementById('info-position').textContent = lecturerData.position || '-';
             document.getElementById('info-studyprogram').textContent = lecturerData.study_program || '-';
 
-            // Create grant selection tabs/buttons
             const selectionArea = document.getElementById('grant-selection-area');
             selectionArea.innerHTML = '';
             if (currentGrants.length > 1) {
@@ -477,7 +497,6 @@
                 selectionArea.appendChild(tabContainer);
             }
 
-            // Display details for the first grant by default
             displayGrantDetails(currentGrants[0] || null);
 
             updateGreeting();
@@ -485,65 +504,52 @@
             setInterval(updateDateTime, 1000);
             showPage('dosen-dashboard');
         }
+        
+        function sendLinkToOwnWhatsApp(documentType, documentUrl) {
+            const waNumber = currentUser.lecturerData.whatsapp_number;
+            if (!waNumber) {
+                alert('Nomor WhatsApp Anda tidak ditemukan. Silakan hubungi admin untuk melengkapi data Anda.');
+                return;
+            }
+            if (!documentUrl) {
+                 alert(`Tautan untuk ${documentType} belum tersedia. Silakan hubungi admin.`);
+                return;
+            }
+
+            const message = `Dokumen Anda: ${documentType}\n\nSilakan unduh melalui tautan berikut:\n${documentUrl}\n\n(Pesan ini dikirim oleh Sistem Kontrak PPM)`;
+            const encodedMessage = encodeURIComponent(message);
+            
+            window.open(`https://wa.me/${waNumber}?text=${encodedMessage}`, '_blank');
+        }
 
         document.getElementById('grant-selection-area').addEventListener('click', (e) => {
             if (e.target.classList.contains('grant-tab')) {
                 document.querySelectorAll('.grant-tab').forEach(tab => tab.classList.remove('active'));
                 e.target.classList.add('active');
-
                 const selectedId = parseInt(e.target.dataset.grantId);
                 const grantToDisplay = currentGrants.find(g => g.id === selectedId);
                 displayGrantDetails(grantToDisplay);
             }
         });
-
-        function loadAdminDashboard() {
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            fetchAndDisplayAdminData();
-            showPage('admin-dashboard');
-        }
+        
+        document.getElementById('send-wa-contract-btn').addEventListener('click', () => sendLinkToOwnWhatsApp('Kontrak PPM Hibah', selectedGrant.contract_url));
+        document.getElementById('send-wa-assignment-btn').addEventListener('click', () => sendLinkToOwnWhatsApp('Surat Tugas', selectedGrant.assignment_letter_url));
 
         document.getElementById('upload-btn').addEventListener('click', async () => {
             const fileInput = document.getElementById('file-upload');
             const file = fileInput.files[0];
             const uploadStatus = document.getElementById('upload-status');
 
-            if (!selectedGrant) {
-                alert('Silakan pilih proyek terlebih dahulu.');
-                return;
-            }
-
-            if (!file) {
-                uploadStatus.textContent = 'Silakan pilih file terlebih dahulu.';
-                uploadStatus.className = 'text-sm mt-2 text-red-500';
-                return;
-            }
+            if (!selectedGrant) { alert('Silakan pilih proyek terlebih dahulu.'); return; }
+            if (!file) { uploadStatus.textContent = 'Silakan pilih file terlebih dahulu.'; return; }
 
             uploadStatus.textContent = 'Mengunggah file...';
-            uploadStatus.className = 'text-sm mt-2 text-blue-500';
-
             const fileName = `${currentUser.lecturerData.nidn}_${selectedGrant.id}_${Date.now()}_${file.name}`;
             
-            const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                .from('contracts')
-                .upload(`public/${fileName}`, file);
-
-            if (uploadError) {
-                console.error('Error uploading file:', uploadError);
-                uploadStatus.textContent = `Gagal mengunggah: ${uploadError.message}`;
-                return;
-            }
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('contracts').upload(`public/${fileName}`, file);
+            if (uploadError) { uploadStatus.textContent = `Gagal mengunggah: ${uploadError.message}`; return; }
             
-            const { error: dbError } = await supabaseClient
-                .from('uploaded_files')
-                .insert([{ 
-                    grant_id: selectedGrant.id,
-                    nidn: currentUser.lecturerData.nidn,
-                    nama_file: file.name,
-                    path_file: uploadData.path,
-                    url_file: `${supabaseUrl}/storage/v1/object/public/contracts/${uploadData.path}`
-                }]);
+            const { error: dbError } = await supabaseClient.from('uploaded_files').insert([{ grant_id: selectedGrant.id, nidn: currentUser.lecturerData.nidn, nama_file: file.name, path_file: uploadData.path, url_file: `${supabaseUrl}/storage/v1/object/public/contracts/${uploadData.path}`}]);
             
             if (dbError) {
                 uploadStatus.textContent = `Gagal menyimpan data: ${dbError.message}`;
@@ -551,157 +557,6 @@
                 uploadStatus.textContent = 'File berhasil diunggah!';
                 fileInput.value = '';
                 loadUploadHistory(selectedGrant.id);
-            }
-        });
-
-        async function fetchAndDisplayAdminData() {
-            const listBody = document.getElementById('admin-grant-list');
-            listBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>';
-
-            const { data: grants, error: grantsError } = await supabaseClient.from('grants').select('*');
-            const { data: lecturers, error: lecturersError } = await supabaseClient.from('lecturers').select('nidn, fullname');
-            const { data: files, error: filesError } = await supabaseClient.from('uploaded_files').select('grant_id');
-            
-            if (grantsError || lecturersError || filesError) {
-                listBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-500">Gagal memuat data.</td></tr>`;
-                return;
-            }
-
-            const lecturerMap = new Map(lecturers.map(l => [l.nidn, l.fullname]));
-            const fileCountMap = new Map();
-            files.forEach(file => {
-                fileCountMap.set(file.grant_id, (fileCountMap.get(file.grant_id) || 0) + 1);
-            });
-
-
-            listBody.innerHTML = '';
-            grants.forEach(grant => {
-                const row = document.createElement('tr');
-                const fileCount = fileCountMap.get(grant.id) || 0;
-
-                row.innerHTML = `
-                    <td class="py-2 px-4 border-b align-top">
-                        <p class="font-semibold">${lecturerMap.get(grant.lecturer_nidn) || 'N/A'}</p>
-                        <p class="text-xs text-gray-600 font-mono">${grant.lecturer_nidn}</p>
-                    </td>
-                    <td class="py-2 px-4 border-b align-top text-xs">${grant.project_title || '-'}</td>
-                    <td class="py-2 px-4 border-b align-top text-sm">${fileCount > 0 ? `${fileCount} file` : 'Belum ada'}</td>
-                    <td class="py-2 px-4 border-b align-top text-center">
-                        <button data-grant-id="${grant.id}" class="edit-grant-btn bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">Edit</button>
-                        <button data-grant-id="${grant.id}" class="delete-grant-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Hapus</button>
-                    </td>
-                `;
-                listBody.appendChild(row);
-            });
-        }
-        
-        // --- ADMIN MODAL & CRUD FUNCTIONS ---
-        
-        function openGrantModal(mode = 'add', grantData = null) {
-            grantForm.reset();
-            const nidnInput = document.getElementById('lecturer_nidn');
-            if (mode === 'add') {
-                modalTitle.textContent = 'Tambah Data Hibah Baru';
-                document.getElementById('form-edit-grant-id').value = '';
-                nidnInput.disabled = false;
-            } else if (mode === 'edit' && grantData) {
-                modalTitle.textContent = 'Edit Data Hibah';
-                document.getElementById('form-edit-grant-id').value = grantData.id;
-                nidnInput.disabled = true;
-
-                // Populate form
-                nidnInput.value = grantData.lecturer_nidn || '';
-                document.getElementById('funding_amount').value = grantData.funding_amount || '';
-                document.getElementById('project_title').value = grantData.project_title || '';
-                document.getElementById('main_contract_number').value = grantData.main_contract_number || '';
-                document.getElementById('derivative_contract_number').value = grantData.derivative_contract_number || '';
-                document.getElementById('contract_number').value = grantData.contract_number || '';
-                document.getElementById('contract_url').value = grantData.contract_url || '';
-                document.getElementById('assignment_letter_url').value = grantData.assignment_letter_url || '';
-            }
-            grantModal.classList.remove('hidden');
-        }
-        
-        function closeGrantModal() {
-            grantModal.classList.add('hidden');
-        }
-
-        addGrantBtn.addEventListener('click', () => openGrantModal('add'));
-        cancelModalBtn.addEventListener('click', closeGrantModal);
-        
-        grantForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const grantId = document.getElementById('form-edit-grant-id').value;
-            const isEditMode = !!grantId;
-            
-            const formData = {
-                lecturer_nidn: document.getElementById('lecturer_nidn').value,
-                funding_amount: document.getElementById('funding_amount').value ? parseInt(document.getElementById('funding_amount').value) : null,
-                project_title: document.getElementById('project_title').value,
-                main_contract_number: document.getElementById('main_contract_number').value,
-                derivative_contract_number: document.getElementById('derivative_contract_number').value,
-                contract_number: document.getElementById('contract_number').value,
-                contract_url: document.getElementById('contract_url').value,
-                assignment_letter_url: document.getElementById('assignment_letter_url').value,
-            };
-
-            let error;
-            if (isEditMode) {
-                const { error: updateError } = await supabaseClient
-                    .from('grants')
-                    .update(formData)
-                    .eq('id', grantId);
-                error = updateError;
-            } else {
-                 const { data: lecturerExists } = await supabaseClient.from('lecturers').select('nidn').eq('nidn', formData.lecturer_nidn).single();
-                 if(!lecturerExists){
-                    alert(`Error: Dosen dengan NIDN ${formData.lecturer_nidn} tidak ditemukan. Silakan tambahkan data dosen terlebih dahulu jika belum ada.`);
-                    return;
-                 }
-                const { error: insertError } = await supabaseClient
-                    .from('grants')
-                    .insert([formData]);
-                error = insertError;
-            }
-
-            if (error) {
-                adminInfo.textContent = `Gagal menyimpan data: ${error.message}`;
-                adminInfo.className = 'text-sm text-center my-2 h-4 text-red-500';
-            } else {
-                adminInfo.textContent = `Data hibah berhasil ${isEditMode ? 'diperbarui' : 'ditambahkan'}.`;
-                adminInfo.className = 'text-sm text-center my-2 h-4 text-green-500';
-                closeGrantModal();
-                fetchAndDisplayAdminData();
-            }
-        });
-
-        document.getElementById('admin-grant-list').addEventListener('click', async (e) => {
-            const target = e.target.closest('button');
-            if (!target) return;
-
-            const grantId = target.dataset.grantId;
-            
-            if (target.classList.contains('edit-grant-btn')) {
-                const { data, error } = await supabaseClient.from('grants').select('*').eq('id', grantId).single();
-                if (data) {
-                    openGrantModal('edit', data);
-                } else {
-                    alert(`Gagal mengambil data untuk hibah dengan ID ${grantId}`);
-                }
-            }
-
-            if (target.classList.contains('delete-grant-btn')) {
-                 if (confirm(`Apakah Anda yakin ingin menghapus data hibah ini? Ini tidak bisa dibatalkan.`)) {
-                     const { error } = await supabaseClient.from('grants').delete().eq('id', grantId);
-                     if (error) {
-                        adminInfo.textContent = `Gagal menghapus data: ${error.message}`;
-                        adminInfo.className = 'text-sm text-center my-2 h-4 text-red-500';
-                     } else {
-                        adminInfo.textContent = 'Data hibah berhasil dihapus.';
-                        adminInfo.className = 'text-sm text-center my-2 h-4 text-green-500';
-                        fetchAndDisplayAdminData();
-                     }
-                 }
             }
         });
         
@@ -714,12 +569,8 @@
 
                 if (confirm('Apakah Anda yakin ingin menghapus file unggahan ini?')) {
                     uploadStatus.textContent = 'Menghapus file...';
-                    
                     const { error: storageError } = await supabaseClient.storage.from('contracts').remove([filePath]);
-                    if (storageError) {
-                        uploadStatus.textContent = `Gagal menghapus file: ${storageError.message}`;
-                        return;
-                    }
+                    if (storageError) { uploadStatus.textContent = `Gagal menghapus file: ${storageError.message}`; return; }
 
                     const { error: dbError } = await supabaseClient.from('uploaded_files').delete().eq('id', fileId);
                     if (dbError) {
@@ -732,22 +583,182 @@
             }
         });
 
+        // --- FUNGSI-FUNGSI DASBOR ADMIN ---
+        
+        function loadAdminDashboard() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            fetchAndDisplayAdminData();
+            showPage('admin-dashboard');
+        }
+
+        async function fetchAndDisplayAdminData() {
+            const listBody = document.getElementById('admin-grant-list');
+            listBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data...</td></tr>';
+            const { data: grants, error: grantsError } = await supabaseClient.from('grants').select('*');
+            const { data: lecturers, error: lecturersError } = await supabaseClient.from('lecturers').select('nidn, fullname');
+            const { data: files, error: filesError } = await supabaseClient.from('uploaded_files').select('grant_id');
+            
+            if (grantsError || lecturersError || filesError) { listBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-500">Gagal memuat data.</td></tr>`; return; }
+
+            const lecturerMap = new Map(lecturers.map(l => [l.nidn, l.fullname]));
+            const fileCountMap = new Map();
+            files.forEach(file => { fileCountMap.set(file.grant_id, (fileCountMap.get(file.grant_id) || 0) + 1); });
+
+            listBody.innerHTML = '';
+            grants.forEach(grant => {
+                const row = document.createElement('tr');
+                const fileCount = fileCountMap.get(grant.id) || 0;
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b align-top"><p class="font-semibold">${lecturerMap.get(grant.lecturer_nidn) || 'N/A'}</p><p class="text-xs text-gray-600 font-mono">${grant.lecturer_nidn}</p></td>
+                    <td class="py-2 px-4 border-b align-top text-xs">${grant.project_title || '-'}</td>
+                    <td class="py-2 px-4 border-b align-top text-sm">${fileCount > 0 ? `${fileCount} file` : 'Belum ada'}</td>
+                    <td class="py-2 px-4 border-b align-top text-center"><button data-grant-id="${grant.id}" class="edit-grant-btn bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">Edit</button><button data-grant-id="${grant.id}" class="delete-grant-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Hapus</button></td>`;
+                listBody.appendChild(row);
+            });
+        }
+        
+        function openGrantModal(mode = 'add', grantData = null) {
+            grantForm.reset();
+            const nidnInput = document.getElementById('lecturer_nidn');
+            if (mode === 'add') {
+                grantModalTitle.textContent = 'Tambah Data Hibah Baru';
+                document.getElementById('form-edit-grant-id').value = '';
+                nidnInput.disabled = false;
+            } else if (mode === 'edit' && grantData) {
+                grantModalTitle.textContent = 'Edit Data Hibah';
+                document.getElementById('form-edit-grant-id').value = grantData.id;
+                nidnInput.disabled = true;
+                nidnInput.value = grantData.lecturer_nidn || '';
+                document.getElementById('funding_amount').value = grantData.funding_amount || '';
+                document.getElementById('project_title').value = grantData.project_title || '';
+                document.getElementById('main_contract_number').value = grantData.main_contract_number || '';
+                document.getElementById('derivative_contract_number').value = grantData.derivative_contract_number || '';
+                document.getElementById('contract_number').value = grantData.contract_number || '';
+                document.getElementById('contract_url').value = grantData.contract_url || '';
+                document.getElementById('assignment_letter_url').value = grantData.assignment_letter_url || '';
+            }
+            grantModal.classList.remove('hidden');
+        }
+        
+        grantForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const grantId = document.getElementById('form-edit-grant-id').value;
+            const isEditMode = !!grantId;
+            const formData = { 
+                lecturer_nidn: document.getElementById('lecturer_nidn').value, 
+                funding_amount: document.getElementById('funding_amount').value ? parseInt(document.getElementById('funding_amount').value) : null, 
+                project_title: document.getElementById('project_title').value, 
+                main_contract_number: document.getElementById('main_contract_number').value, 
+                derivative_contract_number: document.getElementById('derivative_contract_number').value, 
+                contract_number: document.getElementById('contract_number').value,
+                contract_url: document.getElementById('contract_url').value,
+                assignment_letter_url: document.getElementById('assignment_letter_url').value
+            };
+            let error;
+            if (isEditMode) {
+                const { error: updateError } = await supabaseClient.from('grants').update(formData).eq('id', grantId);
+                error = updateError;
+            } else {
+                 const { data: lecturerExists } = await supabaseClient.from('lecturers').select('nidn').eq('nidn', formData.lecturer_nidn).single();
+                 if(!lecturerExists){ alert(`Error: Dosen dengan NIDN ${formData.lecturer_nidn} tidak ditemukan.`); return; }
+                const { error: insertError } = await supabaseClient.from('grants').insert([formData]);
+                error = insertError;
+            }
+            if (error) { adminInfo.textContent = `Gagal menyimpan data: ${error.message}`; } 
+            else { adminInfo.textContent = `Data hibah berhasil ${isEditMode ? 'diperbarui' : 'ditambahkan'}.`; grantModal.classList.add('hidden'); fetchAndDisplayAdminData(); }
+        });
+
+        document.getElementById('admin-grant-list').addEventListener('click', async (e) => {
+            const target = e.target.closest('button');
+            if (!target) return;
+            const grantId = target.dataset.grantId;
+            if (target.classList.contains('edit-grant-btn')) {
+                const { data } = await supabaseClient.from('grants').select('*').eq('id', grantId).single();
+                if (data) openGrantModal('edit', data);
+            }
+            if (target.classList.contains('delete-grant-btn')) {
+                 if (confirm(`Yakin ingin menghapus data hibah ini?`)) {
+                     const { error } = await supabaseClient.from('grants').delete().eq('id', grantId);
+                     if (error) { adminInfo.textContent = `Gagal menghapus data: ${error.message}`; } 
+                     else { adminInfo.textContent = 'Data hibah berhasil dihapus.'; fetchAndDisplayAdminData(); }
+                 }
+            }
+        });
+        
+        async function openLecturerManagementModal() {
+            const listBody = document.getElementById('admin-lecturer-list');
+            listBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Memuat data dosen...</td></tr>';
+            lecturerModal.classList.remove('hidden');
+
+            const { data: lecturers, error } = await supabaseClient.from('lecturers').select('*');
+            if(error){ listBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-red-500">Gagal memuat data.</td></tr>'; return; }
+            
+            listBody.innerHTML = '';
+            lecturers.forEach(lec => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b">${lec.fullname}</td>
+                    <td class="py-2 px-4 border-b font-mono text-sm">${lec.nidn}</td>
+                    <td class="py-2 px-4 border-b font-mono text-sm">${lec.whatsapp_number || '-'}</td>
+                    <td class="py-2 px-4 border-b text-center">
+                        <button data-nidn="${lec.nidn}" class="edit-lecturer-btn bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">Edit</button>
+                    </td>
+                `;
+                listBody.appendChild(row);
+            });
+        }
+        
+        document.getElementById('admin-lecturer-list').addEventListener('click', async (e) => {
+            if(e.target.classList.contains('edit-lecturer-btn')) {
+                const nidn = e.target.dataset.nidn;
+                const {data} = await supabaseClient.from('lecturers').select('*').eq('nidn', nidn).single();
+                if(data) {
+                    document.getElementById('edit-lecturer-nidn').value = data.nidn;
+                    document.getElementById('edit-fullname').value = data.fullname;
+                    document.getElementById('edit-whatsapp').value = data.whatsapp_number || '';
+                    editLecturerModal.classList.remove('hidden');
+                }
+            }
+        });
+
+        editLecturerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nidn = document.getElementById('edit-lecturer-nidn').value;
+            const updatedData = {
+                fullname: document.getElementById('edit-fullname').value,
+                whatsapp_number: document.getElementById('edit-whatsapp').value,
+            };
+            const { error } = await supabaseClient.from('lecturers').update(updatedData).eq('nidn', nidn);
+            if(error) { alert('Gagal memperbarui data: ' + error.message); }
+            else {
+                editLecturerModal.classList.add('hidden');
+                openLecturerManagementModal(); // Refresh list
+            }
+        });
+
+        // --- EVENT LISTENERS & INISIALISASI ---
+        
+        addGrantBtn.addEventListener('click', () => openGrantModal('add'));
+        manageLecturersBtn.addEventListener('click', openLecturerManagementModal);
+        
+        document.querySelectorAll('.cancel-modal-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                grantModal.classList.add('hidden');
+                lecturerModal.classList.add('hidden');
+                editLecturerModal.classList.add('hidden');
+            });
+        });
+
         function logout() {
-            currentUser = null;
-            currentGrants = [];
-            selectedGrant = null;
             sessionStorage.removeItem('user');
-            const interval_id = window.setInterval(function(){}, Number.MAX_SAFE_INTEGER);
-            for (let i = 1; i < interval_id; i++) window.clearInterval(i);
-            showPage('login-page');
-            loginForm.reset();
+            window.location.reload();
         }
         
         document.getElementById('logout-btn-dosen').addEventListener('click', logout);
         document.getElementById('logout-btn-admin').addEventListener('click', logout);
         document.getElementById('refresh-data-btn').addEventListener('click', fetchAndDisplayAdminData);
 
-        // --- INISIALISASI APLIKASI ---
         const savedUser = sessionStorage.getItem('user');
         if (savedUser) {
             currentUser = JSON.parse(savedUser);
